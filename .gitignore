@@ -1,0 +1,31 @@
+# ---- Node / frontend ----
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- .NET / backend ----
+backend/**/bin/
+backend/**/obj/
+*.user
+*.suo
+
+# ---- env / secrets ----
+.env
+.env.*.local
+*.pfx
+*.p12
+appsettings.Local.json
+
+# ---- editors / os ----
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- docker ----
+pgdata/

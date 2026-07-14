@@ -1,0 +1,68 @@
+# =====================================================================
+# ARES — on-prem containerized stack
+#   db  : PostgreSQL 16
+#   api : ASP.NET Core 8 Web API (Entra auth, Graph import + email)
+#   web : React/Vite build served by nginx, proxies /api -> api
+# =====================================================================
+name: ares
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ares}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ares-local-dev-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-ares}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ares} -d ${POSTGRES_DB:-ares}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Not published by default — only the API needs it. Uncomment to inspect.
+    # ports:
+    #   - "5432:5432"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Ares.Api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: "Host=db;Port=5432;Database=${POSTGRES_DB:-ares};Username=${POSTGRES_USER:-ares};Password=${POSTGRES_PASSWORD:-ares-local-dev-change-me}"
+      Entra__TenantId: ${ARES_ENTRA_TENANT_ID}
+      Entra__ClientId: ${ARES_ENTRA_CLIENT_ID}
+      Entra__ClientSecret: ${ARES_ENTRA_CLIENT_SECRET}
+      Entra__ApiAudience: ${ARES_ENTRA_API_AUDIENCE}
+      Mail__Sender: ${ARES_MAIL_SENDER:-global.it.communications@birgma.com}
+      Mail__SaveToSentItems: ${ARES_MAIL_SAVE_TO_SENT:-true}
+      Ares__AllowDemoAuth: ${ARES_ALLOW_DEMO_AUTH:-true}
+    # Published for direct API access / Swagger during the pilot.
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_ENTRA_CLIENT_ID: ${ARES_WEB_ENTRA_CLIENT_ID}
+        VITE_ENTRA_TENANT_ID: ${ARES_WEB_ENTRA_TENANT_ID}
+        VITE_API_SCOPE: ${ARES_WEB_API_SCOPE}
+        VITE_API_BASE: ${ARES_WEB_API_BASE:-/api}
+        VITE_ALLOW_DEMO_AUTH: ${ARES_ALLOW_DEMO_AUTH:-true}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+
+volumes:
+  pgdata:

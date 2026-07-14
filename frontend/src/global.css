@@ -1,0 +1,24 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--brandA); text-decoration: none; }
+a:hover { color: var(--accent); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes arespulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.82);} }
+@keyframes aresrise { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: none;} }
+@keyframes aresfade { from { opacity: 0;} to { opacity: 1;} }
+
+[data-view] { animation: aresrise .28s ease both; }
+.aresnav:hover { background: var(--nav-on) !important; color: var(--text) !important; }
+.aresbtn { transition: transform .08s ease, filter .15s ease; }
+.aresbtn:hover { filter: brightness(1.08); }
+.aresbtn:active { transform: translateY(1px); }
+.arescard:hover { border-color: var(--brandA) !important; }
+[contenteditable] { outline: none; border-radius: 3px; }
+[contenteditable]:hover { box-shadow: inset 0 -1px 0 var(--brandA); cursor: text; }
+[contenteditable]:focus { box-shadow: inset 0 -2px 0 var(--brandA); background: color-mix(in srgb, var(--brandA) 9%, transparent); }
+.aresin:focus { border-color: var(--brandA) !important; outline: none; }
+.aresov { animation: aresfade .16s ease both; }
+input, textarea, button { font-family: inherit; }

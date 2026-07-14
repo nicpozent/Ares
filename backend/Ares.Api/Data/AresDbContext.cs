@@ -49,10 +49,12 @@ public class AresDbContext : DbContext
         e.HasMany(x => x.Evidence).WithOne(x => x.Incident!).HasForeignKey(x => x.IncidentId).OnDelete(DeleteBehavior.Cascade);
         e.HasMany(x => x.Actions).WithOne(x => x.Incident!).HasForeignKey(x => x.IncidentId).OnDelete(DeleteBehavior.Cascade);
 
-        b.Entity<TimelineEvent>().HasKey(x => x.Id);
-        b.Entity<Hypothesis>().HasKey(x => x.Id);
-        b.Entity<EvidenceItem>().HasKey(x => x.Id);
-        b.Entity<CorrectiveAction>().HasKey(x => x.Id);
+        // Child ids (t1, h1, e1, a1 …) are unique only *within* an incident, so
+        // the primary key is composite. This matches the prototype's per-incident ids.
+        b.Entity<TimelineEvent>().HasKey(x => new { x.IncidentId, x.Id });
+        b.Entity<Hypothesis>().HasKey(x => new { x.IncidentId, x.Id });
+        b.Entity<EvidenceItem>().HasKey(x => new { x.IncidentId, x.Id });
+        b.Entity<CorrectiveAction>().HasKey(x => new { x.IncidentId, x.Id });
 
         var dir = b.Entity<DirectoryPrincipal>();
         dir.HasKey(x => x.Id);

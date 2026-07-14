@@ -29,3 +29,6 @@ Thumbs.db
 
 # ---- docker ----
 pgdata/
+
+# TS build cache
+*.tsbuildinfo

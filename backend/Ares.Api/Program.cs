@@ -65,21 +65,23 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // ---- Migrate/seed ----------------------------------------------------------
-using (var scope = app.Services.CreateScope())
+// Fresh scope + DbContext per attempt: a transient failure must not leave
+// entities tracked in a reused context (which would collide on retry).
 {
-    var db = scope.ServiceProvider.GetRequiredService<AresDbContext>();
-    var log = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var startupLog = app.Services.GetRequiredService<ILogger<Program>>();
     for (var attempt = 1; ; attempt++)
     {
         try
         {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AresDbContext>();
             db.Database.EnsureCreated();
             await SeedData.EnsureSeededAsync(db);
             break;
         }
         catch (Exception ex) when (attempt < 10)
         {
-            log.LogWarning(ex, "Database not ready (attempt {Attempt}/10); retrying in 3s…", attempt);
+            startupLog.LogWarning(ex, "Database not ready (attempt {Attempt}/10); retrying in 3s…", attempt);
             await Task.Delay(TimeSpan.FromSeconds(3));
         }
     }

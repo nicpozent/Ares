@@ -119,6 +119,10 @@ interface State {
   saveStatusPage: (doc: StatusPageDoc) => Promise<void>
   saveRunbook: (rb: Runbook) => Promise<void>
   attachRunbook: (id: string) => Promise<void>
+
+  // teams
+  provisionTeams: () => Promise<void>
+  postTeamsCard: () => Promise<void>
 }
 
 async function guard<T>(set: any, fn: () => Promise<T>): Promise<T | undefined> {
@@ -260,4 +264,7 @@ export const useStore = create<State>((set, get) => ({
   saveStatusPage: async (doc) => { set({ statusPage: doc }); await guard(set, () => api.putReadinessDoc('statusPage', doc)) },
   saveRunbook: async (rb) => { const updated = await guard(set, () => api.updateRunbook(rb)); if (updated) set((s) => ({ runbooks: s.runbooks.map((r) => (r.id === rb.id ? updated : r)) })) },
   attachRunbook: async (id) => { const inc = get().activeId; if (!inc) return; await guard(set, () => api.attachRunbook(id, inc)); const fresh = await api.incident(inc); get().replace(fresh); set({ view: 'warroom' }) },
+
+  provisionTeams: async () => { const id = get().activeId; if (!id) return; const res = await guard(set, () => api.teamsProvision(id)); if (res) { const fresh = await api.incident(id); get().replace(fresh) } },
+  postTeamsCard: async () => { const id = get().activeId; if (!id) return; await guard(set, () => api.teamsPostCard(id)) },
 }))

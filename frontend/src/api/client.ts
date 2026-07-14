@@ -87,6 +87,11 @@ export const api = {
   sendEmail: (payload: { incidentId: string; key: string; subject: string; body: string; recips: Record<string, string> }) =>
     req<{ sent: boolean; graphConfigured: boolean; to: string[]; bccCount: number; note: string }>('/email/send', { method: 'POST', body: body(payload) }),
 
+  // teams war room
+  teamsStatus: (id: string) => req<import('../types').TeamsStatus>(`/incidents/${id}/teams/status`),
+  teamsProvision: (id: string) => req<{ provisioned: boolean; channelId: string; channelUrl: string | null }>(`/incidents/${id}/teams/provision`, { method: 'POST' }),
+  teamsPostCard: (id: string) => req<{ posted: boolean }>(`/incidents/${id}/teams/post-card`, { method: 'POST' }),
+
   // readiness
   readinessDoc: <T>(key: string) => req<T>(`/readiness/${key}`),
   putReadinessDoc: (key: string, doc: unknown) => req<void>(`/readiness/${key}`, { method: 'PUT', body: body(doc) }),

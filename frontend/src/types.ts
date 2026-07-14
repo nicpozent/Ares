@@ -34,6 +34,8 @@ export interface Incident {
   sel: SeverityDimensions
   assign: Record<string, string | null>
   comms: CommsBundle
+  teamsChannelId?: string | null
+  teamsChannelUrl?: string | null
   timeline: TimelineEvent[]
   hypotheses: Hypothesis[]
   evidence: EvidenceItem[]
@@ -69,4 +71,6 @@ export interface GraphGroup { id: string; displayName: string; mail?: string | n
 export interface GraphApp { id: string; displayName: string; appId?: string | null }
 export interface GraphPrincipal { entraId: string; name: string; email: string; type: string }
 
-export interface AppConfig { entraConfigured: boolean; mailSender: string; demoAuth: boolean }
+export interface AppConfig { entraConfigured: boolean; mailSender: string; teamsConfigured: boolean; demoAuth: boolean }
+
+export interface TeamsStatus { graphConfigured: boolean; teamsConfigured: boolean; provisioned: boolean; channelId: string | null; channelUrl: string | null }

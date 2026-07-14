@@ -23,6 +23,10 @@ public class Incident
     public Dictionary<string, string?> Assign { get; set; } = new();
     public CommsBundle Comms { get; set; } = new();
 
+    // Microsoft Teams war-room channel (populated when provisioned via Graph).
+    public string? TeamsChannelId { get; set; }
+    public string? TeamsChannelUrl { get; set; }
+
     public List<TimelineEvent> Timeline { get; set; } = new();
     public List<Hypothesis> Hypotheses { get; set; } = new();
     public List<EvidenceItem> Evidence { get; set; } = new();

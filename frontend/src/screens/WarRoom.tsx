@@ -104,6 +104,30 @@ export function WarRoom() {
         {/* RIGHT */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div className="arescard" style={{ borderRadius: 16, border: '1px solid var(--line)', background: 'var(--panel)', padding: '18px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600 }}>Microsoft Teams war room</h3>
+              <span style={{ ...mono, fontSize: 10, color: 'var(--faint)', marginLeft: 'auto' }}>Graph · Adaptive Card</span>
+            </div>
+            {inc.teamsChannelId ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ok)' }} />
+                  Channel provisioned
+                  {inc.teamsChannelUrl && <a href={inc.teamsChannelUrl} target="_blank" rel="noreferrer" style={{ marginLeft: 'auto', ...mono, fontSize: 11 }}>open ↗</a>}
+                </div>
+                <Btn variant="soft" onClick={s.postTeamsCard} style={{ fontSize: 12.5 }}>Post Adaptive Card update</Btn>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.5 }}>
+                  Create the incident channel and post the Adaptive Card to Teams.
+                </div>
+                <Btn variant="primary" onClick={s.provisionTeams} style={{ fontSize: 12.5, opacity: s.busy ? 0.6 : 1 }}>Provision Teams channel →</Btn>
+                {!s.config?.teamsConfigured && <div style={{ ...mono, fontSize: 10.5, color: 'var(--warn)', lineHeight: 1.45 }}>Teams not configured — set Graph creds + Teams:TeamId to enable.</div>}
+              </div>
+            )}
+          </div>
+          <div className="arescard" style={{ borderRadius: 16, border: '1px solid var(--line)', background: 'var(--panel)', padding: '18px 20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}><h3 style={{ fontSize: 14, fontWeight: 600 }}>Pinned dashboard</h3><span style={{ ...mono, fontSize: 10, color: 'var(--faint)', marginLeft: 'auto' }}>Datadog · live</span></div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
               <Metric label="TXN SUCCESS" value="96%" color="var(--ok)" />

@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ---- Options ---------------------------------------------------------------
 builder.Services.Configure<EntraOptions>(builder.Configuration.GetSection("Entra"));
 builder.Services.Configure<MailOptions>(builder.Configuration.GetSection("Mail"));
+builder.Services.Configure<TeamsOptions>(builder.Configuration.GetSection("Teams"));
 builder.Services.Configure<AresOptions>(builder.Configuration.GetSection("Ares"));
 
 var entra = builder.Configuration.GetSection("Entra").Get<EntraOptions>() ?? new EntraOptions();
@@ -75,7 +76,7 @@ var app = builder.Build();
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AresDbContext>();
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
             await SeedData.EnsureSeededAsync(db);
             break;
         }

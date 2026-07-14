@@ -70,12 +70,14 @@ public class MetaController : ControllerBase
 {
     private readonly Microsoft.Extensions.Options.IOptions<EntraOptions> _entra;
     private readonly Microsoft.Extensions.Options.IOptions<MailOptions> _mail;
+    private readonly Microsoft.Extensions.Options.IOptions<TeamsOptions> _teams;
     private readonly Microsoft.Extensions.Options.IOptions<AresOptions> _ares;
     public MetaController(
         Microsoft.Extensions.Options.IOptions<EntraOptions> entra,
         Microsoft.Extensions.Options.IOptions<MailOptions> mail,
+        Microsoft.Extensions.Options.IOptions<TeamsOptions> teams,
         Microsoft.Extensions.Options.IOptions<AresOptions> ares)
-    { _entra = entra; _mail = mail; _ares = ares; }
+    { _entra = entra; _mail = mail; _teams = teams; _ares = ares; }
 
     [HttpGet("roles")]
     public IEnumerable<RoleDef> Roles() => RolesCatalogue.All;
@@ -85,6 +87,7 @@ public class MetaController : ControllerBase
     {
         entraConfigured = _entra.Value.IsConfigured,
         mailSender = _mail.Value.Sender,
+        teamsConfigured = _teams.Value.IsConfigured,
         demoAuth = _ares.Value.AllowDemoAuth
     };
 }

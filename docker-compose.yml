@@ -43,6 +43,7 @@ services:
       Entra__ApiAudience: ${ARES_ENTRA_API_AUDIENCE}
       Mail__Sender: ${ARES_MAIL_SENDER:-global.it.communications@birgma.com}
       Mail__SaveToSentItems: ${ARES_MAIL_SAVE_TO_SENT:-true}
+      Teams__TeamId: ${ARES_TEAMS_TEAM_ID:-}
       Ares__AllowDemoAuth: ${ARES_ALLOW_DEMO_AUTH:-true}
     # Published for direct API access / Swagger during the pilot.
     ports:

@@ -20,6 +20,13 @@ public class MailOptions
     public bool SaveToSentItems { get; set; } = true;
 }
 
+public class TeamsOptions
+{
+    // Object id of the Team (group) under which incident war-room channels are created.
+    public string TeamId { get; set; } = "";
+    public bool IsConfigured => !string.IsNullOrWhiteSpace(TeamId);
+}
+
 public class AresOptions
 {
     public bool AllowDemoAuth { get; set; } = true;

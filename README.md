@@ -22,6 +22,11 @@ What's wired to Microsoft:
 - **Communications** releases email through **Microsoft Graph `sendMail`** from the
   shared mailbox `global.it.communications@birgma.com`, using the Birgma house
   template.
+- **War Room → Teams**: provision a Microsoft Teams channel for the incident and
+  post the **Adaptive Card** (status / roles / current hypothesis) via Graph.
+
+Schema is managed with **EF Core migrations** (applied automatically on API
+startup); see *Database migrations* below.
 
 Severity is **rule-computed, never AI** — the engine is ported verbatim to both
 `backend/.../Services/SeverityEngine.cs` and `frontend/src/lib/severity.ts`.
@@ -100,6 +105,42 @@ The API only enforces JWT auth when Entra is configured **and** demo auth is off
 Graph endpoints return `503` with a clear message until credentials are set, so the
 app degrades gracefully.
 
+### Teams war room (optional)
+
+To let ARES provision an incident channel and post the Adaptive Card:
+
+- Add Graph **application** permissions `Channel.Create` and `ChannelMessage.Send`
+  (admin-consented). Note: app-only posting of channel messages is a
+  [Microsoft protected API](https://learn.microsoft.com/graph/teams-protected-apis)
+  — request access for the app if your tenant enforces it.
+- Set `ARES_TEAMS_TEAM_ID` in `.env` to the object id of the ops **Team** under
+  which incident channels are created.
+
+Then, in the War Room, use **Provision Teams channel** / **Post Adaptive Card
+update**. Without configuration the buttons surface a clear "not configured" hint
+and the endpoints return `503`.
+
+---
+
+## Database migrations
+
+Schema is created and upgraded via **EF Core migrations**, applied automatically on
+API startup (`Database.Migrate()`), so containers self-provision on first boot and
+upgrade in place on deploy. The initial migration lives in
+`backend/Ares.Api/Data/Migrations/`.
+
+To evolve the schema after changing the model:
+
+```bash
+cd backend
+dotnet tool install --global dotnet-ef            # once
+dotnet ef migrations add <Name> --project Ares.Api --output-dir Data/Migrations
+# review the generated migration, then commit it; it applies on next API start
+```
+
+A design-time factory (`Data/AresDbContextFactory.cs`) lets the EF tooling build the
+context without running the web host.
+
 ---
 
 ## Local development (without containers)
@@ -140,8 +181,11 @@ cd frontend && npm install && npm run dev   # http://localhost:5173
 Verified in this environment:
 
 - ✅ Backend compiles (`dotnet build`, 0 warnings/errors) and **runs end-to-end**
-  against PostgreSQL: schema create + seed, severity engine (SEV-1/SEV-3 cases),
-  incident CRUD + child mutations, the Birgma email template, and demo-mode send.
+  against PostgreSQL: **EF migration applied on startup** (composite child keys +
+  jsonb columns + Teams fields verified in the created schema), seed, severity
+  engine (SEV-1/SEV-3 cases), incident CRUD + child mutations, the Birgma email
+  template, demo-mode send, and Teams endpoints degrading gracefully when Graph is
+  unconfigured.
 - ✅ Frontend compiles and bundles (`tsc` + `vite build`, all 16 screens).
 
 Not runnable in this sandbox (network-isolated container builds — works wherever

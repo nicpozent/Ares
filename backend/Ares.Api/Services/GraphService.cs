@@ -1,3 +1,4 @@
+using Ares.Api.Models;
 using Azure.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -149,6 +150,51 @@ public class GraphService
         _log.LogInformation("Graph sendMail: from={Sender} to={To} bcc={Bcc} subject={Subject}",
             sender, message.ToRecipients.Count, message.BccRecipients.Count, subject);
     }
+
+    // ---- Teams war room ---------------------------------------------------
+    /// <summary>Create a standard channel for the incident under the ops Team. Returns (channelId, webUrl).</summary>
+    public async Task<(string channelId, string? webUrl)> CreateWarRoomChannelAsync(string teamId, Incident inc, CancellationToken ct = default)
+    {
+        var channel = new Channel
+        {
+            DisplayName = ChannelName(inc),
+            Description = Truncate($"{inc.Sev} · {inc.Impact}", 1024),
+            MembershipType = ChannelMembershipType.Standard,
+        };
+        var created = await Client.Teams[teamId].Channels.PostAsync(channel, cancellationToken: ct);
+        _log.LogInformation("Teams channel created for {Incident}: {ChannelId}", inc.Id, created?.Id);
+        return (created?.Id ?? "", created?.WebUrl);
+    }
+
+    /// <summary>Post an Adaptive Card as a channel message.</summary>
+    public async Task PostAdaptiveCardAsync(string teamId, string channelId, string cardJson, CancellationToken ct = default)
+    {
+        var attachmentId = Guid.NewGuid().ToString();
+        var message = new ChatMessage
+        {
+            Body = new ItemBody { ContentType = BodyType.Html, Content = $"<attachment id=\"{attachmentId}\"></attachment>" },
+            Attachments = new List<ChatMessageAttachment>
+            {
+                new()
+                {
+                    Id = attachmentId,
+                    ContentType = "application/vnd.microsoft.card.adaptive",
+                    Content = cardJson,
+                }
+            }
+        };
+        await Client.Teams[teamId].Channels[channelId].Messages.PostAsync(message, cancellationToken: ct);
+        _log.LogInformation("Adaptive card posted to team {Team} channel {Channel}", teamId, channelId);
+    }
+
+    // Teams channel display names: max 50 chars, and cannot contain # % & * { } / \ : < > ? + | " ' or tabs.
+    private static string ChannelName(Incident inc)
+    {
+        var raw = $"{inc.Id} — {inc.Title}";
+        var cleaned = new string(raw.Where(c => !"#%&*{}/\\:<>?+|\"'\t".Contains(c)).ToArray()).Trim();
+        return Truncate(cleaned, 50);
+    }
+    private static string Truncate(string s, int max) => s.Length <= max ? s : s[..max];
 
     private static bool NotEmpty(string s) => !string.IsNullOrWhiteSpace(s);
     private static Recipient Recipient(string address) =>

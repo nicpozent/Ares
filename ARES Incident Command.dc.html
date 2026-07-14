@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: var(--brandA); text-decoration: none; }
+  a:hover { color: var(--accent); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  @keyframes arespulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.82);} }
+  @keyframes aresrise { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: none;} }
+  @keyframes aresfade { from { opacity: 0;} to { opacity: 1;} }
+  [data-view] { animation: aresrise .28s ease both; }
+  .aresnav:hover { background: var(--nav-on) !important; color: var(--text) !important; }
+  .aresbtn { transition: transform .08s ease, filter .15s ease; }
+  .aresbtn:hover { filter: brightness(1.08); }
+  .aresbtn:active { transform: translateY(1px); }
+  .arescard:hover { border-color: var(--brandA) !important; }
+  [contenteditable] { outline: none; border-radius: 3px; }
+  [contenteditable]:hover { box-shadow: inset 0 -1px 0 var(--brandA); cursor: text; }
+  [contenteditable]:focus { box-shadow: inset 0 -2px 0 var(--brandA); background: color-mix(in srgb, var(--brandA) 9%, transparent); }
+  .aresin:focus { border-color: var(--brandA) !important; outline: none; }
+  .aresov { animation: aresfade .16s ease both; }
+</style>
+</helmet>
+<div ref="{{ setRef }}" style="--app-bg:linear-gradient(165deg,#0b1330 0%,#0a1024 60%,#080d1e 100%);--shell:#0c1430;--panel:#111c42;--panel2:#0e1738;--line:rgba(150,175,255,.13);--text:#eef2ff;--muted:#9fb0d8;--faint:#6c7fb0;--chip:rgba(150,175,255,.10);--nav-on:rgba(120,160,255,.16);--brandA:#2E93E6;--brandB:#3358d4;--accent:#ff3d6e;--ok:#37d39b;--warn:#ffb020;--grad:linear-gradient(135deg,#3358d4,#2E93E6);--grad-hot:linear-gradient(135deg,#ff3d6e,#ff7a45);--shadow:0 24px 60px -26px rgba(0,0,0,.75);--lk-dark:flex;--lk-light:none; display:flex; min-height:100vh; width:100%; background:var(--app-bg); color:var(--text); font-family:'IBM Plex Sans',sans-serif;">
+
+  <!-- SIDEBAR -->
+  <aside style="width:250px; flex-shrink:0; background:var(--shell); border-right:1px solid var(--line); display:flex; flex-direction:column; position:sticky; top:0; height:100vh;">
+    <div style="padding:22px 20px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:13px;">
+      <div style="filter:drop-shadow(0 6px 12px rgba(46,147,230,.45)); flex-shrink:0;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" width="44" height="48" role="img" aria-label="ARES helmet">
+          <defs>
+            <linearGradient id="aresHelm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E93E6"/><stop offset="0.55" stop-color="#1e5fd0"/><stop offset="1" stop-color="#1B3B9B"/></linearGradient>
+            <linearGradient id="aresCrest" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4d6d"/><stop offset="1" stop-color="#DE0A45"/></linearGradient>
+          </defs>
+          <path d="M58 48 C 40 30 46 6 86 2 C 66 12 58 30 64 48 Z" fill="url(#aresCrest)"/>
+          <path d="M63 47 C 52 32 58 14 80 8 C 68 18 64 32 70 47 Z" fill="#ff5c78" opacity="0.5"/>
+          <rect x="49" y="42" width="22" height="9" rx="4.5" fill="#DE0A45"/>
+          <path d="M34 46 C 40 36 52 32 60 32 C 68 32 80 36 86 46 C 92 58 90 78 84 94 C 80 106 72 114 60 116 C 48 114 40 106 36 94 C 30 78 28 58 34 46 Z" fill="url(#aresHelm)"/>
+          <path d="M41 60 C 47 57 52 57 55 60 L 55 68 C 50 65 45 65 41 68 Z" fill="#0b1330"/>
+          <path d="M79 60 C 73 57 68 57 65 60 L 65 68 C 70 65 75 65 79 68 Z" fill="#0b1330"/>
+          <path d="M56 62 L 64 62 L 62 100 C 61 103 59 103 58 100 Z" fill="#0b1330"/>
+          <path d="M38 52 C 46 46 74 46 82 52" stroke="#7fbcf2" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.65"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:23px; letter-spacing:.5px; line-height:1; background:linear-gradient(120deg,#8fd0ff,#7f9dff); -webkit-background-clip:text; background-clip:text; color:transparent;">ARES</div>
+        <div style="font-size:9.5px; letter-spacing:1.6px; color:var(--faint); font-weight:600; margin-top:4px; font-family:'IBM Plex Mono',monospace;">INCIDENT COMMAND</div>
+      </div>
+    </div>
+    <nav style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:2px;">
+      <div style="font-size:10px; letter-spacing:1.4px; color:var(--faint); font-weight:600; padding:8px 12px 6px; font-family:'IBM Plex Mono',monospace;">OPERATE</div>
+      <sc-for list="{{ navOperate }}" as="n" hint-placeholder-count="6">
+        <button class="aresnav" onClick="{{ n.onClick }}" data-nav="{{ n.id }}" style="display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:none; cursor:pointer; padding:9px 12px; border-radius:9px; background:transparent; color:var(--muted); font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:500;">
+          <span style="width:20px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:.85;">{{ n.glyph }}</span>
+          <span style="flex:1;">{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}" hint-placeholder-val=""><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; background:{{ n.badgeBg }}; color:{{ n.badgeColor }};">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+      <div style="font-size:10px; letter-spacing:1.4px; color:var(--faint); font-weight:600; padding:16px 12px 6px; font-family:'IBM Plex Mono',monospace;">RESOLVE &amp; LEARN</div>
+      <sc-for list="{{ navResolve }}" as="n" hint-placeholder-count="5">
+        <button class="aresnav" onClick="{{ n.onClick }}" data-nav="{{ n.id }}" style="display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:none; cursor:pointer; padding:9px 12px; border-radius:9px; background:transparent; color:var(--muted); font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:500;">
+          <span style="width:20px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:.85;">{{ n.glyph }}</span>
+          <span style="flex:1;">{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}" hint-placeholder-val=""><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; background:{{ n.badgeBg }}; color:{{ n.badgeColor }};">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+      <div style="font-size:10px; letter-spacing:1.4px; color:var(--faint); font-weight:600; padding:16px 12px 6px; font-family:'IBM Plex Mono',monospace;">READINESS</div>
+      <sc-for list="{{ navReadiness }}" as="n" hint-placeholder-count="4">
+        <button class="aresnav" onClick="{{ n.onClick }}" data-nav="{{ n.id }}" style="display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:none; cursor:pointer; padding:9px 12px; border-radius:9px; background:transparent; color:var(--muted); font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:500;">
+          <span style="width:20px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:.85;">{{ n.glyph }}</span>
+          <span style="flex:1;">{{ n.label }}</span>
+          <sc-if value="{{ n.badge }}" hint-placeholder-val=""><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; background:{{ n.badgeBg }}; color:{{ n.badgeColor }};">{{ n.badge }}</span></sc-if>
+        </button>
+      </sc-for>
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:10px; letter-spacing:1.4px; color:var(--warn); font-weight:600; padding:16px 12px 6px; font-family:'IBM Plex Mono',monospace; display:flex; align-items:center; gap:6px;"><span>◆</span>ADMINISTER</div>
+        <button class="aresnav" onClick="{{ goAdmin }}" data-nav="admin" style="display:flex; align-items:center; gap:11px; width:100%; text-align:left; border:none; cursor:pointer; padding:9px 12px; border-radius:9px; background:transparent; color:var(--muted); font-family:'IBM Plex Sans',sans-serif; font-size:13.5px; font-weight:500;">
+          <span style="width:20px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12px; opacity:.85;">◆</span><span style="flex:1;">Access &amp; Roles</span>
+        </button>
+      </sc-if>
+    </nav>
+    <div style="padding:14px 16px; border-top:1px solid var(--line); display:flex; align-items:center; gap:10px;">
+      <div style="width:32px; height:32px; border-radius:50%; background:var(--grad); display:grid; place-items:center; font-weight:600; font-size:12px; color:#fff; font-family:'IBM Plex Mono',monospace;">AS</div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Anna Svensson</div>
+        <div style="font-size:10.5px; color:var(--faint);">{{ meRole }}</div>
+      </div>
+      <button class="aresbtn" onClick="{{ toggleAdmin }}" title="{{ adminTip }}" style="border:1px solid var(--line); background:{{ adminBtnBg }}; color:{{ adminBtnColor }}; cursor:pointer; width:30px; height:30px; border-radius:8px; font-size:13px;">◆</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <header style="position:sticky; top:0; z-index:20; backdrop-filter:blur(12px); background:color-mix(in srgb, var(--shell) 82%, transparent); border-bottom:1px solid var(--line); padding:13px 26px; display:flex; align-items:center; gap:16px;">
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; gap:11px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--brandA); font-weight:600;">{{ incId }}</span>
+          <span style="width:4px; height:4px; border-radius:50%; background:var(--faint);"></span>
+          <span style="font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ incTitle }}</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:5px 12px; border-radius:20px; background:var(--chip); border:1px solid var(--line);">
+        <span style="width:8px; height:8px; border-radius:50%; background:{{ statusDot }}; animation:arespulse 1.4s infinite;"></span>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; letter-spacing:.5px;">{{ status }}</span>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:var(--text); padding:5px 12px; border-radius:8px; background:var(--panel2); border:1px solid var(--line);">{{ clock }}</div>
+      <div style="display:flex; gap:2px; padding:3px; border-radius:11px; background:var(--panel2); border:1px solid var(--line);">
+        <sc-for list="{{ themeOptions }}" as="th" hint-placeholder-count="3">
+          <button class="aresbtn" onClick="{{ th.onClick }}" title="{{ th.label }} style" style="display:flex; align-items:center; gap:6px; cursor:pointer; border:none; border-radius:8px; padding:6px 10px; font-size:12px; font-weight:600; font-family:'IBM Plex Sans',sans-serif; background:{{ th.bg }}; color:{{ th.color }};"><span style="font-size:12px;">{{ th.glyph }}</span>{{ th.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span style="display:var(--lk-dark); align-items:center; gap:14px;"><img src="assets/birgma-white.png" alt="Birgma" style="height:20px; display:block; opacity:.95;"><span style="width:1px; height:20px; background:var(--line);"></span><img src="assets/biltema-white.png" alt="Biltema" style="height:12.5px; display:block; opacity:.95;"></span>
+        <span style="display:var(--lk-light); align-items:center; gap:14px;"><img src="assets/birgma.png" alt="Birgma" style="height:20px; display:block;"><span style="width:1px; height:20px; background:var(--line);"></span><img src="assets/biltema.png" alt="Biltema" style="height:12.5px; display:block;"></span>
+      </div>
+    </header>
+
+    <div style="flex:1; overflow-y:auto; padding:26px 28px 60px;">
+
+      <!-- INCIDENTS LIST -->
+      <sc-if value="{{ vIncidents }}" hint-placeholder-val="{{ true }}"><section data-view="incidents" data-screen-label="Incidents" style="max-width:1180px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:22px; flex-wrap:wrap;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>INCIDENT REGISTER</div>
+            <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">All incidents</h1>
+          </div>
+          <button class="aresbtn" onClick="{{ newIncident }}" style="border:none; background:var(--grad); color:#fff; cursor:pointer; padding:11px 20px; border-radius:10px; font-size:13.5px; font-weight:600; font-family:'IBM Plex Sans',sans-serif; box-shadow:0 10px 24px -10px var(--brandA);">+ Declare incident</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ incidentsView }}" as="i" hint-placeholder-count="3">
+            <div class="arescard" style="border-radius:14px; border:1px solid {{ i.border }}; background:var(--panel); padding:16px 20px; display:grid; grid-template-columns:auto 1fr auto; gap:18px; align-items:center; transition:border-color .15s;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; width:76px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; padding:4px 10px; border-radius:7px; color:#fff; background:{{ i.sevBg }};">{{ i.sev }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ i.statusColor }};">{{ i.status }}</span>
+              </div>
+              <div style="min-width:0;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--brandA); font-weight:600;">{{ i.id }}</span><span style="font-size:15px; font-weight:600;">{{ i.title }}</span></div>
+                <div style="font-size:12.5px; color:var(--muted); line-height:1.5;">{{ i.impact }}</div>
+                <div style="display:flex; gap:16px; margin-top:8px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint); flex-wrap:wrap;"><span>{{ i.serviceLabel }}</span><span>{{ i.countryLabel }}</span><span>IC · {{ i.icName }}</span><span>{{ i.evLabel }}</span></div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="aresbtn" onClick="{{ i.onOpen }}" style="border:1px solid var(--line); background:var(--chip); color:var(--text); cursor:pointer; padding:9px 15px; border-radius:9px; font-size:12.5px; font-weight:600;">Open</button>
+                <button class="aresbtn" onClick="{{ i.onEdit }}" title="Edit incident" style="border:1px solid var(--line); background:var(--panel2); color:var(--muted); cursor:pointer; width:36px; height:36px; border-radius:9px; font-size:14px;">✎</button>
+                <button class="aresbtn" onClick="{{ i.onDelete }}" title="Delete incident" style="border:1px solid var(--line); background:var(--panel2); color:var(--accent); cursor:pointer; width:36px; height:36px; border-radius:9px; font-size:15px;">🗑</button>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noIncidents }}" hint-placeholder-val=""><div style="text-align:center; padding:60px; color:var(--faint); font-size:14px;">No incidents. Declare one to begin.</div></sc-if>
+        </div>
+      </section></sc-if>
+
+      <!-- WAR ROOM -->
+      <sc-if value="{{ vWarroom }}" hint-placeholder-val=""><section data-view="warroom" data-screen-label="War Room" style="max-width:1240px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>MICROSOFT TEAMS WAR ROOM</div>
+            <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Incident cockpit</h1>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="aresbtn" onClick="{{ goComms }}" style="border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;">Post update</button>
+            <button class="aresbtn" onClick="{{ resolveIncident }}" style="border:none; background:var(--grad-hot); color:#fff; cursor:pointer; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:0 8px 20px -8px var(--accent);">Resolve incident</button>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1.55fr 1fr; gap:18px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div style="border-radius:16px; overflow:hidden; border:1px solid var(--line); background:var(--panel); box-shadow:var(--shadow);">
+              <div style="padding:16px 20px; background:linear-gradient(120deg,rgba(255,61,110,.16),rgba(51,88,212,.10)); border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px;">
+                <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; padding:4px 10px; border-radius:7px; background:{{ sevBg }}; color:#fff;">{{ sev }}</span>
+                <span style="font-weight:600; font-size:15px;">{{ incId }} — {{ incTitle }}</span>
+                <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted);">Adaptive Card</span>
+              </div>
+              <div style="padding:20px;">
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px;">
+                  <div><div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:5px;">STATUS</div><div style="font-weight:600; font-size:14px;">{{ status }}</div></div>
+                  <div><div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:5px;">STARTED</div><div style="font-weight:600; font-size:14px; font-family:'IBM Plex Mono',monospace;">{{ incStarted }}</div></div>
+                  <div><div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:5px;">DURATION</div><div style="font-weight:600; font-size:14px; font-family:'IBM Plex Mono',monospace;">{{ incDuration }}</div></div>
+                </div>
+                <div style="padding:13px 16px; border-radius:11px; background:var(--panel2); border:1px solid var(--line); margin-bottom:16px;">
+                  <div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:5px;">IMPACT · click to edit</div>
+                  <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ editImpact }}" style="font-size:14px; line-height:1.5;">{{ incImpact }}</div>
+                </div>
+                <div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:10px;">INCIDENT ROLES · click to assign from Entra directory</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:18px;">
+                  <sc-for list="{{ rosterSlots }}" as="r" hint-placeholder-count="6">
+                    <button class="aresbtn" onClick="{{ r.onClick }}" style="display:flex; align-items:center; gap:10px; text-align:left; border:1px solid var(--line); background:var(--panel2); cursor:pointer; padding:9px 11px; border-radius:10px;">
+                      <span style="width:28px; height:28px; border-radius:50%; background:{{ r.avBg }}; color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; flex-shrink:0;">{{ r.init }}</span>
+                      <span style="min-width:0;"><span style="display:block; font-size:9.5px; letter-spacing:.5px; color:var(--faint); font-family:'IBM Plex Mono',monospace;">{{ r.role }}</span><span style="display:block; font-size:12.5px; font-weight:600; color:{{ r.nameColor }}; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</span></span>
+                    </button>
+                  </sc-for>
+                </div>
+                <div style="padding:13px 16px; border-radius:11px; border:1px dashed var(--line); background:linear-gradient(120deg,rgba(51,88,212,.08),transparent); margin-bottom:18px;">
+                  <div style="font-size:10.5px; letter-spacing:.8px; color:var(--brandA); font-family:'IBM Plex Mono',monospace; margin-bottom:5px; font-weight:600;">CURRENT HYPOTHESIS · {{ cardHypoStatus }}</div>
+                  <div style="font-size:14px; line-height:1.5;">{{ cardHypo }}</div>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:9px;">
+                  <sc-for list="{{ cardActions }}" as="a" hint-placeholder-count="6"><button class="aresbtn" onClick="{{ a.onClick }}" style="border:1px solid var(--line); background:var(--chip); color:var(--text); cursor:pointer; padding:9px 15px; border-radius:9px; font-size:12.5px; font-weight:600;">{{ a.label }}</button></sc-for>
+                </div>
+              </div>
+            </div>
+            <div class="arescard" style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; transition:border-color .15s;">
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:15px;">
+                <span style="width:8px; height:8px; border-radius:50%; background:var(--ok); animation:arespulse 1.6s infinite;"></span>
+                <h3 style="font-size:14px; font-weight:600;">AI Scribe — live feed</h3>
+                <button class="aresbtn" onClick="{{ goTimeline }}" style="margin-left:auto; border:1px solid var(--line); background:var(--panel2); color:var(--muted); cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:4px 10px; border-radius:7px;">sources ↗</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:2px;">
+                <sc-for list="{{ feedRecent }}" as="e" hint-placeholder-count="5">
+                  <div style="display:flex; gap:13px; padding:9px 0; border-bottom:1px solid var(--line);">
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--faint); flex-shrink:0; width:60px;">{{ e.t }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.5px; padding:2px 7px; border-radius:5px; flex-shrink:0; height:fit-content; color:#fff; background:{{ e.color }};">{{ e.type }}</span>
+                    <span style="font-size:13px; line-height:1.45;">{{ e.text }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="arescard" style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; transition:border-color .15s;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;"><h3 style="font-size:14px; font-weight:600;">Pinned dashboard</h3><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); margin-left:auto;">Datadog · live</span></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+                <div style="padding:12px; border-radius:10px; background:var(--panel2); border:1px solid var(--line);"><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); margin-bottom:6px;">TXN SUCCESS</div><div style="font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; color:var(--ok);">96%</div></div>
+                <div style="padding:12px; border-radius:10px; background:var(--panel2); border:1px solid var(--line);"><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); margin-bottom:6px;">TLS ERRORS/min</div><div style="font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; color:var(--warn);">12</div></div>
+              </div>
+              <div style="height:70px; border-radius:10px; background:var(--panel2); border:1px solid var(--line); display:flex; align-items:flex-end; gap:3px; padding:10px;">
+                <sc-for list="{{ spark }}" as="s" hint-placeholder-count="20"><span style="flex:1; border-radius:2px 2px 0 0; background:{{ s.c }}; height:{{ s.h }};"></span></sc-for>
+              </div>
+            </div>
+            <div class="arescard" style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; transition:border-color .15s;">
+              <div style="display:flex; align-items:center; margin-bottom:12px;"><h3 style="font-size:14px; font-weight:600;">Connected context</h3><button class="aresbtn" onClick="{{ goEvidence }}" style="margin-left:auto; border:none; background:transparent; color:var(--brandA); cursor:pointer; font-size:11.5px; font-weight:600;">Evidence →</button></div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <sc-for list="{{ resources }}" as="x" hint-placeholder-count="5"><a href="#" style="display:flex; align-items:center; gap:10px; padding:8px 11px; border-radius:9px; background:var(--panel2); border:1px solid var(--line); font-size:12.5px; color:var(--text);"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--brandA); width:64px; flex-shrink:0;">{{ x.src }}</span><span style="flex:1;">{{ x.label }}</span><span style="color:var(--faint);">→</span></a></sc-for>
+              </div>
+            </div>
+            <div class="arescard" style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; transition:border-color .15s;">
+              <h3 style="font-size:14px; font-weight:600; margin-bottom:12px;">Related incidents</h3>
+              <sc-if value="{{ hasLinks }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+                  <sc-for list="{{ linkedView }}" as="l" hint-placeholder-count="1">
+                    <div style="display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:9px; background:var(--panel2); border:1px solid var(--line);">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:700; padding:3px 7px; border-radius:6px; color:#fff; background:{{ l.sevBg }}; flex-shrink:0;">{{ l.sev }}</span>
+                      <span style="flex:1; min-width:0;"><span style="display:block; font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ l.title }}</span><span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--brandA);">{{ l.id }}</span></span>
+                      <button class="aresbtn" onClick="{{ l.onCycle }}" title="Change relationship" style="cursor:pointer; border:1px solid {{ l.relColor }}; background:transparent; color:{{ l.relColor }}; font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:600; padding:3px 8px; border-radius:6px;">{{ l.relLabel }}</button>
+                      <button class="aresbtn" onClick="{{ l.onOpen }}" title="Open" style="cursor:pointer; border:none; background:transparent; color:var(--faint); font-size:14px;">↗</button>
+                      <button class="aresbtn" onClick="{{ l.onUnlink }}" title="Unlink" style="cursor:pointer; border:none; background:transparent; color:var(--faint); font-size:14px;">×</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ linkableView }}" hint-placeholder-val="">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.5px; color:var(--faint); margin-bottom:7px;">LINK ANOTHER</div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <sc-for list="{{ linkableView }}" as="k" hint-placeholder-count="1">
+                    <button class="aresbtn" onClick="{{ k.onLink }}" style="display:flex; align-items:center; gap:9px; text-align:left; cursor:pointer; border:1px dashed var(--line); background:transparent; padding:8px 11px; border-radius:9px;"><span style="color:var(--brandA); font-size:14px;">+</span><span style="flex:1; min-width:0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ k.title }}</span></button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </section></sc-if>
+
+      <!-- DECLARE / EDIT -->
+      <sc-if value="{{ vDeclare }}" hint-placeholder-val=""><section data-view="declare" data-screen-label="Declare" style="max-width:1120px; margin:0 auto;">
+        <div style="margin-bottom:22px;">
+          <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>{{ declareKicker }}</div>
+          <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">{{ declareTitle }}</h1>
+          <p style="color:var(--muted); font-size:14px; margin-top:8px; max-width:660px; line-height:1.55;">Severity is driven by explicit rules — not the model. Fill the details, set each dimension; ARES computes severity and routes the response.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:20px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="border-radius:13px; border:1px solid var(--line); background:var(--panel); padding:16px 18px; display:flex; flex-direction:column; gap:13px;">
+              <div><div style="font-size:11px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">TITLE</div><input class="aresin" value="{{ draftTitle }}" onInput="{{ setDraftTitle }}" placeholder="Short incident title" style="width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:14px; font-family:'IBM Plex Sans',sans-serif;"></div>
+              <div><div style="font-size:11px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">IMPACT</div><textarea class="aresin" value="{{ draftImpact }}" onInput="{{ setDraftImpact }}" placeholder="Who / what is affected" style="width:100%; min-height:56px; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13.5px; font-family:'IBM Plex Sans',sans-serif; resize:vertical;"></textarea></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><div style="font-size:11px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">AFFECTED SERVICE</div><input class="aresin" value="{{ draftServiceName }}" onInput="{{ setDraftServiceName }}" placeholder="e.g. store-payment-svc" style="width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13.5px;"></div>
+                <div><div style="font-size:11px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">COUNTRY / ENTITY</div><input class="aresin" value="{{ draftCountry }}" onInput="{{ setDraftCountry }}" placeholder="e.g. Sweden" style="width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13.5px;"></div>
+              </div>
+            </div>
+            <sc-for list="{{ dimsView }}" as="d" hint-placeholder-count="7">
+              <div style="border-radius:13px; border:1px solid var(--line); background:var(--panel); padding:14px 16px;">
+                <div style="font-size:12.5px; font-weight:600; margin-bottom:10px; color:var(--muted); display:flex; align-items:center; gap:8px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">{{ d.tag }}</span>{{ d.label }}</div>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                  <sc-for list="{{ d.options }}" as="o" hint-placeholder-count="3"><button class="aresbtn" onClick="{{ o.onClick }}" style="cursor:pointer; padding:8px 14px; border-radius:9px; font-size:12.5px; font-weight:600; border:1px solid {{ o.border }}; background:{{ o.bg }}; color:{{ o.color }};">{{ o.label }}</button></sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:sticky; top:90px; display:flex; flex-direction:column; gap:16px;">
+            <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); box-shadow:var(--shadow); overflow:hidden;">
+              <div style="padding:22px; text-align:center; background:{{ draftSevBg }};">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.4px; color:#fff; opacity:.85; margin-bottom:8px;">COMPUTED SEVERITY</div>
+                <div style="font-family:'Space Grotesk',sans-serif; font-size:52px; font-weight:700; color:#fff; line-height:1;">{{ draftSev }}</div>
+              </div>
+              <div style="padding:18px 20px;">
+                <div style="font-size:10.5px; letter-spacing:.8px; color:var(--faint); font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">DECIDING RULE</div>
+                <div style="font-size:13.5px; line-height:1.5; margin-bottom:16px;">{{ draftReason }}</div>
+                <button class="aresbtn" onClick="{{ saveDraft }}" style="width:100%; border:none; background:var(--grad); color:#fff; cursor:pointer; padding:13px; border-radius:11px; font-size:13.5px; font-weight:600; box-shadow:0 10px 24px -10px var(--brandA);">{{ saveLabel }}</button>
+                <button class="aresbtn" onClick="{{ cancelDraft }}" style="width:100%; margin-top:9px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; padding:10px; border-radius:11px; font-size:12.5px; font-weight:600;">Cancel</button>
+              </div>
+            </div>
+            <div style="border-radius:13px; border:1px solid var(--line); background:var(--panel2); padding:16px;">
+              <div style="font-size:12px; font-weight:600; margin-bottom:11px;">On declare, ARES automatically…</div>
+              <sc-for list="{{ autoSteps }}" as="s" hint-placeholder-count="6"><div style="display:flex; gap:9px; padding:5px 0; font-size:12.5px; color:var(--muted); align-items:flex-start;"><span style="color:var(--ok); font-weight:700;">✓</span><span>{{ s }}</span></div></sc-for>
+            </div>
+          </div>
+        </div>
+      </section></sc-if>
+
+      <!-- TIMELINE / SCRIBE -->
+      <sc-if value="{{ vTimeline }}" hint-placeholder-val=""><section data-view="timeline" data-screen-label="Timeline" style="max-width:1100px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>AI SCRIBE · REAL-TIME TIMELINE</div>
+            <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">One reconstructed truth</h1>
+          </div>
+          <button class="aresbtn" onClick="{{ addTimeline }}" style="border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;">+ Add event</button>
+        </div>
+        <div style="border-radius:16px; border:1px solid var(--line); background:linear-gradient(135deg, color-mix(in srgb, var(--brandB) 12%, var(--panel)), var(--panel)); padding:18px 20px; margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.8px; color:var(--brandA); font-weight:600;">▣ WHERE THE SCRIBE FEEDS FROM</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ok);">● 7 sources connected · synced {{ clock }}</span></div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+            <sc-for list="{{ scribeSources }}" as="s" hint-placeholder-count="8">
+              <div style="padding:11px 13px; border-radius:10px; background:var(--panel2); border:1px solid var(--line);">
+                <div style="display:flex; align-items:center; gap:7px; margin-bottom:4px;"><span style="width:8px; height:8px; border-radius:2px; background:{{ s.c }};"></span><span style="font-size:12px; font-weight:600;">{{ s.src }}</span></div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); line-height:1.4;">{{ s.detail }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:12px; font-size:11.5px; color:var(--muted); line-height:1.5;">The scribe fuses these signals into a single record — it does <strong style="color:var(--text);">not</strong> rely on meeting transcripts alone. Transcript access via Microsoft Graph is admin-gated and off by default. Every entry is editable; click text to correct, the timestamp to adjust, or the type tag to reclassify.</div>
+        </div>
+        <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:8px 22px 14px;">
+          <sc-for list="{{ timelineFull }}" as="e" hint-placeholder-count="12">
+            <div style="display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line);">
+              <div style="width:70px; flex-shrink:0; text-align:right;">
+                <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ e.editТime }}" style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--text);">{{ e.t }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); margin-top:2px;">CET</div>
+              </div>
+              <div style="position:relative; flex-shrink:0; width:12px;"><span style="position:absolute; top:3px; left:50%; transform:translateX(-50%); width:11px; height:11px; border-radius:50%; background:{{ e.color }};"></span><span style="position:absolute; top:16px; left:50%; transform:translateX(-50%); width:2px; height:calc(100% + 6px); background:var(--line);"></span></div>
+              <div style="flex:1; min-width:0;">
+                <div style="display:flex; align-items:center; gap:9px; margin-bottom:4px; flex-wrap:wrap;">
+                  <button class="aresbtn" onClick="{{ e.cycleType }}" title="Click to reclassify" style="cursor:pointer; border:none; font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.5px; padding:2px 7px; border-radius:5px; color:#fff; background:{{ e.color }};">{{ e.type }}</button>
+                  <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--brandA);">{{ e.src }}</span>
+                </div>
+                <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ e.editText }}" style="font-size:13.5px; line-height:1.5;">{{ e.text }}</div>
+              </div>
+              <button class="aresbtn" onClick="{{ e.onDel }}" title="Delete" style="flex-shrink:0; align-self:flex-start; border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:15px;">×</button>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- HYPOTHESES -->
+      <sc-if value="{{ vHypotheses }}" hint-placeholder-val=""><section data-view="hypotheses" data-screen-label="Hypotheses" style="max-width:1080px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>HYPOTHESIS REGISTER</div>
+            <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Every theory, tracked</h1>
+          </div>
+          <button class="aresbtn" onClick="{{ addHypo }}" style="border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;">+ Add hypothesis</button>
+        </div>
+        <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px; line-height:1.5;">AI may suggest hypotheses, but each is labelled and owned. <span style="color:var(--text); font-weight:600;">Click the status to advance it; click any text to edit.</span></p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ hyposView }}" as="h" hint-placeholder-count="4">
+            <div class="arescard" style="border-radius:14px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; display:grid; grid-template-columns:1fr auto; gap:16px; align-items:start; transition:border-color .15s;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;"><span style="width:26px; height:26px; border-radius:7px; background:var(--panel2); border:1px solid var(--line); display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted);">{{ h.owner_init }}</span><span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ h.editTitle }}" style="font-size:15px; font-weight:600;">{{ h.title }}</span></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                  <div style="padding:11px 13px; border-radius:9px; background:color-mix(in srgb, var(--ok) 10%, transparent); border-left:2px solid var(--ok);"><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.6px; color:var(--ok); font-weight:600; margin-bottom:5px;">EVIDENCE FOR</div><div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ h.editFor }}" style="font-size:12.5px; line-height:1.45; color:var(--muted);">{{ h.forE }}</div></div>
+                  <div style="padding:11px 13px; border-radius:9px; background:color-mix(in srgb, var(--accent) 9%, transparent); border-left:2px solid var(--accent);"><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.6px; color:var(--accent); font-weight:600; margin-bottom:5px;">EVIDENCE AGAINST</div><div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ h.editAgainst }}" style="font-size:12.5px; line-height:1.45; color:var(--muted);">{{ h.againstE }}</div></div>
+                </div>
+              </div>
+              <div style="text-align:right; min-width:130px;">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); margin-bottom:7px;">OWNER · <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ h.editOwner }}">{{ h.owner }}</span></div>
+                <button class="aresbtn" onClick="{{ h.onClick }}" style="cursor:pointer; border:1px solid {{ h.sc }}; background:{{ h.sbg }}; color:{{ h.sc }}; font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; letter-spacing:.4px; padding:7px 13px; border-radius:8px;">{{ h.status }}</button>
+                <button class="aresbtn" onClick="{{ h.onDel }}" title="Delete" style="display:block; margin-left:auto; margin-top:8px; border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:12px;">Remove</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- EVIDENCE -->
+      <sc-if value="{{ vEvidence }}" hint-placeholder-val=""><section data-view="evidence" data-screen-label="Evidence" style="max-width:1080px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>EVIDENCE REGISTER</div>
+            <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Chain of evidence</h1>
+          </div>
+          <button class="aresbtn" onClick="{{ addEvidence }}" style="border:none; background:var(--grad); color:#fff; cursor:pointer; padding:11px 18px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:0 10px 24px -10px var(--brandA);">+ Add evidence</button>
+        </div>
+        <p style="color:var(--muted); font-size:13.5px; margin-bottom:16px; line-height:1.5;">Attach logs, metrics, screenshots, config/change records and links. Each item is immutably timestamped and feeds the RCA. Click the kind tag to change it; click any text to edit.</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ evidenceView }}" as="v" hint-placeholder-count="4">
+            <div class="arescard" style="border-radius:13px; border:1px solid var(--line); background:var(--panel); padding:15px 18px; display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; transition:border-color .15s;">
+              <button class="aresbtn" onClick="{{ v.cycleKind }}" title="Change kind" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; width:72px; border:1px solid var(--line); background:var(--panel2); border-radius:10px; padding:9px 6px;"><span style="font-size:17px; color:{{ v.kc }};">{{ v.glyph }}</span><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.4px; color:var(--faint);">{{ v.kindLabel }}</span></button>
+              <div style="min-width:0;">
+                <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ v.editTitle }}" style="font-size:14px; font-weight:600; margin-bottom:4px;">{{ v.title }}</div>
+                <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ v.editNote }}" style="font-size:12.5px; color:var(--muted); line-height:1.5; margin-bottom:6px;">{{ v.note }}</div>
+                <div style="display:flex; gap:14px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); flex-wrap:wrap;"><span>SRC · <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ v.editSource }}">{{ v.source }}</span></span><span>REF · <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ v.editRef }}">{{ v.ref }}</span></span><span>{{ v.by }} · {{ v.t }}</span></div>
+              </div>
+              <button class="aresbtn" onClick="{{ v.onDel }}" title="Delete" style="border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:16px;">×</button>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noEvidence }}" hint-placeholder-val=""><div style="text-align:center; padding:40px; color:var(--faint); font-size:13.5px;">No evidence attached yet. Add logs, metrics or screenshots to build the chain.</div></sc-if>
+        </div>
+      </section></sc-if>
+
+      <!-- COMMUNICATIONS -->
+      <sc-if value="{{ vComms }}" hint-placeholder-val=""><section data-view="comms" data-screen-label="Communications" style="max-width:1120px; margin:0 auto;">
+        <div style="margin-bottom:20px;">
+          <div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>AUDIENCE-SPECIFIC COMMUNICATIONS</div>
+          <h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">One incident, three drafts</h1>
+        </div>
+        <sc-if value="{{ lastEmail }}" hint-placeholder-val=""><div class="aresov" style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:11px; background:color-mix(in srgb, var(--ok) 14%, transparent); border:1px solid color-mix(in srgb, var(--ok) 45%, transparent); margin-bottom:16px;"><span style="color:var(--ok); font-weight:700;">✓</span><span style="font-size:13px;">{{ lastEmail }}</span></div></sc-if>
+        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:11px; background:color-mix(in srgb, var(--warn) 12%, transparent); border:1px solid color-mix(in srgb, var(--warn) 40%, transparent); margin-bottom:20px;">
+          <span style="width:20px; height:20px; border-radius:50%; background:var(--warn); color:#000; display:grid; place-items:center; font-weight:700; font-size:13px; flex-shrink:0;">!</span>
+          <span style="font-size:13px;"><strong>SEV-1 — human approval required.</strong> AI wording is a draft until an accountable responder approves it. Click any draft to edit.</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+          <sc-for list="{{ commsView }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex; flex-direction:column; border-radius:15px; border:1px solid var(--line); background:var(--panel); overflow:hidden;">
+              <div style="padding:15px 17px; border-bottom:1px solid var(--line);"><div style="font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700;">{{ c.aud }}</div><div style="font-size:11.5px; color:var(--faint); margin-top:2px;">{{ c.to }}</div></div>
+              <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ c.editBody }}" style="padding:16px 17px; flex:1; font-size:13px; line-height:1.6; color:var(--muted);">{{ c.body }}</div>
+              <div style="padding:14px 17px; border-top:1px solid var(--line);">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.5px; font-weight:600; color:{{ c.statusColor }}; margin-bottom:10px;">{{ c.statusLabel }}</div>
+                <div style="display:flex; gap:8px;">
+                  <button class="aresbtn" onClick="{{ c.onApprove }}" style="flex:1; cursor:pointer; border:none; border-radius:9px; padding:10px; font-size:12px; font-weight:600; color:#fff; background:{{ c.btnBg }};">{{ c.btnLabel }}</button>
+                  <button class="aresbtn" onClick="{{ c.onEmail }}" title="Compose email release" style="cursor:pointer; border:1px solid var(--line); background:var(--panel2); color:var(--text); border-radius:9px; padding:10px 13px; font-size:12px; font-weight:600;">✉ Release</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- RCA -->
+      <sc-if value="{{ vRca }}" hint-placeholder-val=""><section data-view="rca" data-screen-label="RCA" style="max-width:1120px; margin:0 auto;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap; margin-bottom:22px;">
+          <div><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>POST-INCIDENT REPORT · {{ incId }}</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">AI-drafted RCA</h1></div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 14px; border-radius:20px; background:color-mix(in srgb, var(--warn) 12%, transparent); border:1px solid color-mix(in srgb, var(--warn) 40%, transparent);"><span style="width:8px; height:8px; border-radius:50%; background:var(--warn);"></span><span style="font-size:12px; font-weight:600;">Draft — causality pending human validation</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:18px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:20px;">
+              <h3 style="font-size:14px; font-weight:600; margin-bottom:15px;">Causal breakdown</h3>
+              <div style="display:flex; flex-direction:column; gap:11px;">
+                <sc-for list="{{ rcaFactors }}" as="f" hint-placeholder-count="6"><div style="display:grid; grid-template-columns:150px 1fr; gap:14px; align-items:start; padding-bottom:11px; border-bottom:1px solid var(--line);"><div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:{{ f.tone }}; display:flex; align-items:center; gap:8px;"><span style="width:8px; height:8px; border-radius:2px; background:{{ f.tone }};"></span>{{ f.k }}</div><div style="font-size:13px; line-height:1.5;">{{ f.v }}</div></div></sc-for>
+              </div>
+            </div>
+            <div style="border-radius:15px; border:1px solid var(--line); background:linear-gradient(135deg, color-mix(in srgb, var(--brandB) 16%, var(--panel)), var(--panel)); padding:20px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.8px; color:var(--brandA); font-weight:600; margin-bottom:14px;">EVIDENCE-BACKED FINDING</div>
+              <div style="font-size:15px; font-weight:600; line-height:1.5; margin-bottom:14px;">The certificate deployment (CHG-18442) triggered the payment outage.</div>
+              <div style="display:flex; flex-direction:column; gap:7px; margin-bottom:16px;"><sc-for list="{{ rcaEvidence }}" as="ev" hint-placeholder-count="4"><div style="display:flex; gap:9px; font-size:12.5px; color:var(--muted);"><span style="color:var(--brandA); font-family:'IBM Plex Mono',monospace;">›</span><span style="font-family:'IBM Plex Mono',monospace; font-size:12px;">{{ ev }}</span></div></sc-for></div>
+              <div style="display:flex; gap:22px; flex-wrap:wrap;"><div><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); margin-bottom:4px;">CONFIDENCE</div><div style="font-weight:700; color:var(--ok); font-size:14px;">High</div></div><div><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); margin-bottom:4px;">VALIDATION</div><div style="font-weight:600; font-size:14px;">Approved · Payment Platform Owner</div></div></div>
+            </div>
+            <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:20px;">
+              <h3 style="font-size:14px; font-weight:600; margin-bottom:15px;">Five Whys</h3>
+              <div style="display:flex; flex-direction:column;"><sc-for list="{{ fiveWhys }}" as="w" hint-placeholder-count="5"><div style="display:flex; gap:13px; padding:9px 0;"><span style="width:22px; height:22px; border-radius:50%; background:var(--grad); color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; flex-shrink:0;">{{ w.n }}</span><span style="font-size:13px; line-height:1.5;">{{ w.t }}</span></div></sc-for></div>
+            </div>
+          </div>
+          <div style="position:sticky; top:90px;">
+            <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:18px 20px;">
+              <h3 style="font-size:13px; font-weight:600; margin-bottom:6px;">Report structure</h3>
+              <p style="font-size:11.5px; color:var(--faint); margin-bottom:14px;">Auto-assembled · 20 sections</p>
+              <div style="display:flex; flex-direction:column; gap:1px;"><sc-for list="{{ rcaStructure }}" as="r" hint-placeholder-count="20"><div style="display:flex; gap:10px; padding:5px 0; font-size:12px; align-items:baseline;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); width:18px; flex-shrink:0;">{{ r.n }}</span><span style="color:var(--muted);">{{ r.t }}</span></div></sc-for></div>
+              <button class="aresbtn" onClick="{{ goActions }}" style="width:100%; margin-top:16px; border:none; background:var(--grad); color:#fff; cursor:pointer; padding:12px; border-radius:10px; font-size:13px; font-weight:600;">Approve &amp; track actions →</button>
+            </div>
+          </div>
+        </div>
+      </section></sc-if>
+
+      <!-- ACTIONS -->
+      <sc-if value="{{ vActions }}" hint-placeholder-val=""><section data-view="actions" data-screen-label="Actions" style="max-width:1080px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>CORRECTIVE-ACTION GOVERNANCE</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">The report is not the finish line</h1></div>
+          <button class="aresbtn" onClick="{{ addAction }}" style="border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;">+ Add action</button>
+        </div>
+        <p style="color:var(--muted); font-size:13.5px; margin-bottom:16px; line-height:1.5;">Actions sync to Jira, Azure DevOps or ServiceNow. ARES flags weak actions. <span style="color:var(--text); font-weight:600;">Click priority or status to change; click text to edit.</span></p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ actionsView }}" as="a" hint-placeholder-count="7">
+            <div style="border-radius:12px; border:1px solid {{ a.rowBorder }}; background:{{ a.rowBg }}; padding:15px 18px; display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:{{ a.metaGap }};"><sc-if value="{{ a.weak }}" hint-placeholder-val=""><span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.5px; padding:3px 8px; border-radius:5px; background:var(--accent); color:#fff;">⚠ WEAK — AI FLAGGED</span></sc-if><span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ a.editDesc }}" style="font-size:14px; font-weight:600; color:{{ a.descColor }};">{{ a.desc }}</span></div>
+                <sc-if value="{{ a.showMeta }}" hint-placeholder-val="{{ true }}"><div style="display:flex; gap:18px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--faint);"><span>OWNER · <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ a.editOwner }}">{{ a.owner }}</span></span><span>DUE · <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ a.editDue }}">{{ a.due }}</span></span></div></sc-if>
+                <sc-if value="{{ a.weak }}" hint-placeholder-val=""><div style="font-size:12px; color:var(--muted); margin-top:2px;">→ Recommend a systemic control instead.</div></sc-if>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <button class="aresbtn" onClick="{{ a.cyclePrio }}" style="cursor:{{ a.cursor }}; border:1px solid {{ a.pc }}; background:transparent; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; color:{{ a.pc }}; width:36px; text-align:center; padding:5px 0; border-radius:7px;">{{ a.prio }}</button>
+                <button class="aresbtn" onClick="{{ a.onClick }}" style="cursor:{{ a.cursor }}; border:1px solid {{ a.stc }}; background:transparent; color:{{ a.stc }}; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; padding:6px 12px; border-radius:7px; min-width:104px;">{{ a.st }}</button>
+                <button class="aresbtn" onClick="{{ a.onDel }}" title="Delete" style="border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:15px;">×</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- ANALYTICS -->
+      <sc-if value="{{ vAnalytics }}" hint-placeholder-val=""><section data-view="analytics" data-screen-label="Analytics" style="max-width:1120px; margin:0 auto;">
+        <div style="margin-bottom:22px;"><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>RESILIENCE INTELLIGENCE</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">From one incident to a pattern</h1></div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;">
+          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="8"><div style="border-radius:13px; border:1px solid var(--line); background:var(--panel); padding:16px;"><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); margin-bottom:8px;">{{ m.k }}</div><div style="font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; line-height:1;">{{ m.v }}</div><div style="display:flex; align-items:center; justify-content:space-between; margin-top:8px;"><span style="font-size:10.5px; color:var(--faint);">{{ m.s }}</span><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:{{ m.trendColor }};">{{ m.trend }}</span></div></div></sc-for>
+        </div>
+        <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:18px; align-items:start;">
+          <div style="border-radius:16px; border:1px solid var(--accent); background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--panel)), var(--panel)); padding:24px;"><div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:1px; color:var(--accent); font-weight:600; margin-bottom:14px;">◆ PATTERN DETECTED</div><div style="font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; line-height:1.4;">{{ patternInsight }}</div><div style="font-size:12.5px; color:var(--muted); margin-top:16px; line-height:1.5;">ARES recommends a tenant-wide certificate-lifecycle control — more valuable than any single-incident summary.</div></div>
+          <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:22px;"><h3 style="font-size:14px; font-weight:600; margin-bottom:18px;">Incidents by critical service</h3><div style="display:flex; flex-direction:column; gap:14px;"><sc-for list="{{ incidentCats }}" as="ic" hint-placeholder-count="5"><div><div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:6px;"><span>{{ ic.label }}</span><span style="font-family:'IBM Plex Mono',monospace; color:var(--muted);">{{ ic.pctLabel }}</span></div><div style="height:8px; border-radius:6px; background:var(--panel2); overflow:hidden;"><div style="height:100%; border-radius:6px; background:{{ ic.c }}; width:{{ ic.pctLabel }};"></div></div></div></sc-for></div></div>
+        </div>
+      </section></sc-if>
+
+      <!-- ON-CALL & PAGING -->
+      <sc-if value="{{ vOncall }}" hint-placeholder-val=""><section data-view="oncall" data-screen-label="On-call" style="max-width:1120px; margin:0 auto;">
+        <div style="margin-bottom:20px;"><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>ON-CALL · ESCALATION · PAGING</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Who responds, and when</h1></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start; margin-bottom:18px;">
+          <sc-for list="{{ schedulesView }}" as="sc" hint-placeholder-count="2">
+            <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:18px 20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><h3 style="font-size:14px; font-weight:600;">{{ sc.team }}</h3><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">{{ sc.tz }}</span></div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint); margin-bottom:14px;">{{ sc.rotation }}</div>
+              <div style="display:flex; flex-direction:column; gap:9px;">
+                <sc-for list="{{ sc.shifts }}" as="sh" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; gap:11px;">
+                    <span style="width:30px; height:30px; border-radius:50%; background:{{ sh.avBg }}; color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; flex-shrink:0;">{{ sh.init }}</span>
+                    <span style="flex:1; min-width:0;"><span style="display:block; font-size:13px; font-weight:600;">{{ sh.name }}</span><span style="display:block; font-size:10.5px; color:var(--faint);">{{ sh.label }}</span></span>
+                    <span style="display:flex; align-items:center; gap:6px;"><span style="width:7px; height:7px; border-radius:50%; background:{{ sh.dot }};"></span><span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.4px; color:{{ sh.dot }};">{{ sh.stateLabel }}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <sc-for list="{{ escalationView }}" as="ep" hint-placeholder-count="2">
+              <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:18px 20px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;"><h3 style="font-size:14px; font-weight:600;">{{ ep.name }}</h3><button class="aresbtn" onClick="{{ ep.onPage }}" style="margin-left:auto; border:none; background:var(--grad-hot); color:#fff; cursor:pointer; font-family:'IBM Plex Sans',sans-serif; font-size:11.5px; font-weight:600; padding:6px 13px; border-radius:8px;">Page now</button></div>
+                <div style="display:flex; flex-direction:column; gap:0;">
+                  <sc-for list="{{ ep.steps }}" as="st" hint-placeholder-count="4">
+                    <div style="display:flex; gap:12px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line);">
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--brandA); width:52px; flex-shrink:0;">{{ st.after }}</span>
+                      <span style="flex:1; min-width:0;"><span style="display:block; font-size:12.5px; font-weight:600;">{{ st.target }}</span></span>
+                      <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); flex-shrink:0;">{{ st.via }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:18px 20px;">
+            <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;"><span style="width:8px; height:8px; border-radius:50%; background:var(--accent); animation:arespulse 1.4s infinite;"></span><h3 style="font-size:14px; font-weight:600;">Active pages</h3><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">acknowledge to stop escalation</span></div>
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ pagesView }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; gap:12px; padding:11px 13px; border-radius:11px; background:var(--panel2); border:1px solid var(--line);">
+                  <span style="flex:1; min-width:0;"><span style="display:block; font-size:12.5px; font-weight:600;">{{ p.target }}</span><span style="display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">{{ p.via }} · sent {{ p.at }}</span></span>
+                  <button class="aresbtn" onClick="{{ p.onAck }}" style="cursor:pointer; border:1px solid {{ p.pillColor }}; background:{{ p.pillBg }}; color:{{ p.pillColor }}; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:6px 12px; border-radius:8px;">{{ p.ackText }}</button>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </section></sc-if>
+
+      <!-- RUNBOOKS -->
+      <sc-if value="{{ vRunbooks }}" hint-placeholder-val=""><section data-view="runbooks" data-screen-label="Runbooks" style="max-width:1080px; margin:0 auto;">
+        <div style="margin-bottom:20px;"><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>RUNBOOKS · PLAYBOOKS</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Codified response</h1><p style="color:var(--muted); font-size:13.5px; margin-top:8px; line-height:1.5;">Attach a runbook to the active incident and work its steps. <span style="color:var(--text); font-weight:600;">Tick steps as you go; click the title to edit.</span></p></div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <sc-for list="{{ runbooksView }}" as="rb" hint-placeholder-count="3">
+            <div class="arescard" style="border-radius:15px; border:1px solid var(--line); background:var(--panel); padding:18px 20px; transition:border-color .15s;">
+              <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:14px;">
+                <div style="flex:1; min-width:0;">
+                  <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ rb.editTitle }}" style="font-size:15px; font-weight:600; margin-bottom:5px;">{{ rb.title }}</div>
+                  <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint);"><span>SERVICE · {{ rb.service }}</span><span>TRIGGER · {{ rb.trigger }}</span><span>OWNER · {{ rb.owner }}</span></div>
+                </div>
+                <div style="text-align:right; flex-shrink:0;"><div style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--brandA);">{{ rb.pct }}</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">{{ rb.progress }} steps</div></div>
+                <button class="aresbtn" onClick="{{ rb.onAttach }}" style="flex-shrink:0; border:none; background:var(--grad); color:#fff; cursor:pointer; font-family:'IBM Plex Sans',sans-serif; font-size:12px; font-weight:600; padding:9px 15px; border-radius:9px;">Attach to incident</button>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:2px; border-top:1px solid var(--line); padding-top:12px;">
+                <sc-for list="{{ rb.steps }}" as="st" hint-placeholder-count="4">
+                  <button class="aresbtn" onClick="{{ st.onToggle }}" style="display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer; border:none; background:transparent; padding:7px 0;">
+                    <span style="width:19px; height:19px; border-radius:6px; border:1.5px solid {{ st.boxBorder }}; background:{{ st.box }}; color:#fff; display:grid; place-items:center; font-size:11px; flex-shrink:0;">{{ st.mark }}</span>
+                    <span style="font-size:13px; color:{{ st.textColor }}; text-decoration:{{ st.strike }};">{{ st.text }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- STATUS PAGE -->
+      <sc-if value="{{ vStatus }}" hint-placeholder-val=""><section data-view="status" data-screen-label="Status Page" style="max-width:1000px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+          <div><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>CUSTOMER-FACING STATUS PAGE</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Public status</h1></div>
+          <button class="aresbtn" onClick="{{ toggleStatusPublish }}" style="border:1px solid var(--line); background:{{ publishBg }}; color:{{ publishColor }}; cursor:pointer; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600;">{{ publishLabel }}</button>
+        </div>
+        <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); overflow:hidden;">
+          <div style="padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:14px; background:linear-gradient(120deg, color-mix(in srgb, var(--brandB) 12%, var(--panel)), var(--panel));">
+            <div style="width:12px; height:12px; border-radius:50%; background:{{ overallColor }}; box-shadow:0 0 10px {{ overallColor }};"></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700;">{{ overallLabel }}</div>
+            <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--faint);">{{ statusUrl }}</div>
+          </div>
+          <div style="padding:10px 24px;">
+            <sc-for list="{{ statusComponents }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid var(--line);">
+                <span style="flex:1; font-size:13.5px; font-weight:500;">{{ c.name }}</span>
+                <button class="aresbtn" onClick="{{ c.onCycle }}" title="Click to change state" style="cursor:pointer; display:flex; align-items:center; gap:8px; border:1px solid {{ c.color }}; background:transparent; padding:5px 12px; border-radius:20px;"><span style="width:8px; height:8px; border-radius:50%; background:{{ c.color }};"></span><span style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:{{ c.color }};">{{ c.label }}</span></button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; margin:24px 0 12px;"><h3 style="font-size:15px; font-weight:600;">Incident updates</h3><button class="aresbtn" onClick="{{ addStatusUpdate }}" style="margin-left:auto; border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:8px 14px; border-radius:9px; font-size:12.5px; font-weight:600;">+ Post update</button></div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ statusUpdates }}" as="u" hint-placeholder-count="2">
+            <div style="border-radius:13px; border:1px solid var(--line); background:var(--panel); padding:16px 18px;">
+              <div style="display:flex; align-items:center; gap:11px; margin-bottom:8px;">
+                <button class="aresbtn" onClick="{{ u.onCycleState }}" style="cursor:pointer; border:1px solid {{ u.stColor }}; background:transparent; color:{{ u.stColor }}; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; letter-spacing:.4px; padding:3px 9px; border-radius:6px;">{{ u.stLabel }}</button>
+                <span contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ u.editTitle }}" style="font-size:14px; font-weight:600;">{{ u.title }}</span>
+                <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint);">{{ u.t }}</span>
+                <button class="aresbtn" onClick="{{ u.onDel }}" title="Delete" style="border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:14px;">×</button>
+              </div>
+              <div contentEditable="{{ true }}" suppressContentEditableWarning="{{ true }}" onBlur="{{ u.editBody }}" style="font-size:13px; color:var(--muted); line-height:1.55;">{{ u.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- SLOs & ERROR BUDGET -->
+      <sc-if value="{{ vSlo }}" hint-placeholder-val=""><section data-view="slo" data-screen-label="SLOs" style="max-width:1080px; margin:0 auto;">
+        <div style="margin-bottom:20px;"><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>SLOs · ERROR BUDGET</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Service objectives & budget burn</h1><p style="color:var(--muted); font-size:13.5px; margin-top:8px; line-height:1.5;">Track objectives against error budget. A breaching SLO can be escalated to an incident in one click.</p></div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ sloView }}" as="s" hint-placeholder-count="4">
+            <div style="border-radius:14px; border:1px solid var(--line); background:var(--panel); padding:17px 20px;">
+              <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr auto; gap:18px; align-items:center; margin-bottom:12px;">
+                <div><div style="font-size:14px; font-weight:600;">{{ s.objective }}</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint); margin-top:2px;">{{ s.service }} · {{ s.window }}</div></div>
+                <div><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); margin-bottom:3px;">CURRENT / TARGET</div><div style="font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700;"><span style="color:{{ s.curColor }};">{{ s.currentLabel }}</span> <span style="color:var(--faint); font-size:12px;">/ {{ s.targetLabel }}</span></div></div>
+                <div><div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); margin-bottom:3px;">BURN RATE</div><div style="font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:700; color:{{ s.burnColor }};">{{ s.burn }}</div></div>
+                <div style="display:flex; align-items:center; gap:12px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; color:{{ s.stateColor }};">{{ s.stateLabel }}</span><button class="aresbtn" onClick="{{ s.onDeclare }}" style="border:1px solid var(--line); background:var(--panel2); color:var(--text); cursor:pointer; font-size:11.5px; font-weight:600; padding:7px 13px; border-radius:8px;">Declare incident</button></div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); width:96px; flex-shrink:0;">BUDGET {{ s.budgetLabel }}</span><div style="flex:1; height:8px; border-radius:6px; background:var(--panel2); overflow:hidden;"><div style="height:100%; border-radius:6px; background:{{ s.barColor }}; width:{{ s.barW }};"></div></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+      <!-- PLATFORM -->
+      <sc-if value="{{ vPlatform }}" hint-placeholder-val=""><section data-view="platform" data-screen-label="Platform" style="max-width:1120px; margin:0 auto;">
+        <div style="margin-bottom:22px;"><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--faint); font-weight:600; margin-bottom:8px;"><span style="width:14px; height:1px; background:var(--brandA);"></span>PLATFORM · ARCHITECTURE · SECURITY</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Built on Microsoft, governed for trust</h1></div>
+        <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:18px; align-items:start; margin-bottom:18px;">
+          <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:22px;" data-om-raster><h3 style="font-size:14px; font-weight:600; margin-bottom:16px;">Reference architecture</h3><div style="display:flex; flex-direction:column; gap:8px; align-items:center;"><sc-for list="{{ archLayers }}" as="l" hint-placeholder-count="6"><div style="width:{{ l.w }}; border-radius:10px; padding:12px 16px; border:1px solid var(--line); background:{{ l.bg }}; text-align:center;"><div style="font-size:12.5px; font-weight:600; color:{{ l.tc }};">{{ l.t }}</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ l.sc }}; margin-top:3px;">{{ l.s }}</div></div></sc-for></div></div>
+          <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); padding:22px;"><h3 style="font-size:14px; font-weight:600; margin-bottom:16px;">Security &amp; governance controls</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 14px;"><sc-for list="{{ secControls }}" as="s" hint-placeholder-count="12"><div style="display:flex; gap:8px; font-size:12px; color:var(--muted); align-items:flex-start; line-height:1.4;"><span style="color:var(--ok); flex-shrink:0;">✓</span><span>{{ s }}</span></div></sc-for></div><div style="margin-top:16px; padding:12px 14px; border-radius:10px; background:var(--panel2); border:1px dashed var(--line); font-size:12px; color:var(--muted); line-height:1.5;">The model acts only through explicitly authorized tools. It never holds broad infrastructure credentials.</div></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+          <div style="border-radius:14px; border:1px solid var(--line); background:var(--panel); padding:18px;"><div style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--brandA);">Buy a platform when</div><sc-for list="{{ buyList }}" as="b" hint-placeholder-count="5"><div style="display:flex; gap:8px; font-size:12px; color:var(--muted); padding:4px 0; line-height:1.4;"><span style="color:var(--faint);">›</span>{{ b }}</div></sc-for></div>
+          <div style="border-radius:14px; border:1px solid var(--line); background:var(--panel); padding:18px;"><div style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--accent);">Build when</div><sc-for list="{{ buildList }}" as="b" hint-placeholder-count="5"><div style="display:flex; gap:8px; font-size:12px; color:var(--muted); padding:4px 0; line-height:1.4;"><span style="color:var(--faint);">›</span>{{ b }}</div></sc-for></div>
+          <div style="border-radius:14px; border:1px solid var(--line); background:linear-gradient(150deg, color-mix(in srgb, var(--brandB) 20%, var(--panel)), var(--panel)); padding:18px;"><div style="font-size:13px; font-weight:700; margin-bottom:8px;">Recommendation · Hybrid</div><div style="font-size:12px; color:var(--muted); line-height:1.55;">Keep ITSM as system of record. Use Teams as the interface. Build the intelligence, correlation &amp; RCA layer. Reuse existing monitoring, paging &amp; security.</div></div>
+        </div>
+      </section></sc-if>
+
+      <!-- ADMIN · ACCESS & ROLES -->
+      <sc-if value="{{ vAdmin }}" hint-placeholder-val=""><section data-view="admin" data-screen-label="Admin" style="max-width:1180px; margin:0 auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:8px; flex-wrap:wrap;">
+          <div><div style="display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:1.2px; color:var(--warn); font-weight:600; margin-bottom:8px;"><span>◆</span>ADMINISTRATOR ONLY · ACCESS &amp; ROLES</div><h1 style="font-family:'Space Grotesk',sans-serif; font-size:29px; font-weight:700; letter-spacing:-.5px;">Entra ID → ARES roles</h1></div>
+          <div style="display:flex; gap:10px;">
+            <button class="aresbtn" onClick="{{ syncEntra }}" style="border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; padding:10px 16px; border-radius:10px; font-size:13px; font-weight:600;">↻ Sync from Entra ID</button>
+            <button class="aresbtn" onClick="{{ addMapping }}" style="border:none; background:var(--grad); color:#fff; cursor:pointer; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:0 10px 24px -10px var(--brandA);">+ Map user or group</button>
+          </div>
+        </div>
+        <p style="color:var(--muted); font-size:13.5px; margin-bottom:16px; line-height:1.5; max-width:760px;">Map Entra ID users and security groups to ARES roles. These assignments gate what each person can do and populate the role pickers when responders are assigned to an incident. <span style="color:var(--text); font-weight:600;">{{ syncStatus }}</span></p>
+
+        <div style="border-radius:16px; border:1px solid var(--line); background:var(--panel); overflow:hidden; margin-bottom:22px;">
+          <div style="display:grid; grid-template-columns:1.6fr 2.4fr auto; gap:16px; padding:12px 20px; border-bottom:1px solid var(--line); background:var(--panel2); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.8px; color:var(--faint); font-weight:600;"><span>ENTRA ID PRINCIPAL</span><span>ASSIGNED ARES ROLES</span><span></span></div>
+          <sc-for list="{{ directoryView }}" as="u" hint-placeholder-count="8">
+            <div style="display:grid; grid-template-columns:1.6fr 2.4fr auto; gap:16px; padding:14px 20px; border-bottom:1px solid var(--line); align-items:center;">
+              <div style="display:flex; align-items:center; gap:11px; min-width:0;">
+                <span style="width:34px; height:34px; border-radius:{{ u.avatarRadius }}; background:{{ u.avBg }}; color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; flex-shrink:0;">{{ u.init }}</span>
+                <div style="min-width:0;"><div style="display:flex; align-items:center; gap:7px;"><span style="font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ u.name }}</span><span style="font-family:'IBM Plex Mono',monospace; font-size:9px; padding:1px 6px; border-radius:5px; background:var(--chip); color:var(--faint);">{{ u.typeLabel }}</span></div><div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ u.email }}</div></div>
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <sc-for list="{{ u.roleChips }}" as="rc" hint-placeholder-count="3"><button class="aresbtn" onClick="{{ rc.onToggle }}" title="Toggle role" style="cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:20px; border:1px solid {{ rc.border }}; background:{{ rc.bg }}; color:{{ rc.color }};">{{ rc.label }}</button></sc-for>
+              </div>
+              <button class="aresbtn" onClick="{{ u.onDel }}" title="Remove mapping" style="border:none; background:transparent; color:var(--faint); cursor:pointer; font-size:16px;">×</button>
+            </div>
+          </sc-for>
+        </div>
+
+        <h3 style="font-size:15px; font-weight:600; margin-bottom:6px;">Role catalogue</h3>
+        <p style="color:var(--faint); font-size:12.5px; margin-bottom:14px;">Standard incident-management roles available for mapping and per-incident assignment.</p>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+          <sc-for list="{{ roleCatalogue }}" as="r" hint-placeholder-count="12">
+            <div style="border-radius:12px; border:1px solid var(--line); background:var(--panel); padding:14px 16px;">
+              <div style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"><span style="width:26px; height:26px; border-radius:7px; background:{{ r.chipBg }}; color:{{ r.chipColor }}; display:grid; place-items:center; font-size:13px;">{{ r.glyph }}</span><span style="font-size:13px; font-weight:600;">{{ r.label }}</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:8.5px; letter-spacing:.5px; padding:2px 6px; border-radius:5px; background:var(--chip); color:var(--faint);">{{ r.kindLabel }}</span></div>
+              <div style="font-size:11.5px; color:var(--muted); line-height:1.45;">{{ r.desc }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint); margin-top:8px;">{{ r.count }} mapped</div>
+            </div>
+          </sc-for>
+        </div>
+      </section></sc-if>
+
+    </div>
+  </main>
+
+  <!-- ASSIGN ROLE MODAL -->
+  <sc-if value="{{ showAssign }}" hint-placeholder-val="">
+    <div class="aresov" onClick="{{ closeModal }}" style="position:fixed; inset:0; z-index:100; background:rgba(4,8,20,.66); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:520px; max-height:86vh; overflow-y:auto; border-radius:18px; border:1px solid var(--line); background:var(--panel); box-shadow:var(--shadow);">
+        <div style="padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px;"><div><div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.8px; color:var(--faint);">ASSIGN ROLE</div><div style="font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700; margin-top:2px;">{{ assignRoleLabel }}</div></div><button class="aresbtn" onClick="{{ closeModal }}" style="margin-left:auto; border:1px solid var(--line); background:var(--panel2); color:var(--muted); cursor:pointer; width:32px; height:32px; border-radius:8px; font-size:15px;">×</button></div>
+        <div style="padding:14px 16px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); padding:6px 8px;">ELIGIBLE — MAPPED TO THIS ROLE IN ENTRA</div>
+          <sc-for list="{{ assignCandidates }}" as="c" hint-placeholder-count="4">
+            <button class="aresbtn" onClick="{{ c.onPick }}" style="width:100%; display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer; border:1px solid {{ c.border }}; background:{{ c.bg }}; border-radius:11px; padding:11px 13px; margin-bottom:7px;">
+              <span style="width:32px; height:32px; border-radius:{{ c.avatarRadius }}; background:{{ c.avBg }}; color:#fff; display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; flex-shrink:0;">{{ c.init }}</span>
+              <span style="flex:1; min-width:0;"><span style="display:block; font-size:13.5px; font-weight:600;">{{ c.name }}</span><span style="display:block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--faint);">{{ c.email }}</span></span>
+              <sc-if value="{{ c.selected }}" hint-placeholder-val=""><span style="color:var(--ok); font-size:16px;">✓</span></sc-if>
+            </button>
+          </sc-for>
+          <sc-if value="{{ assignHasOther }}" hint-placeholder-val="{{ true }}">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); padding:12px 8px 6px;">OTHER DIRECTORY MEMBERS</div>
+            <sc-for list="{{ assignOthers }}" as="c" hint-placeholder-count="3">
+              <button class="aresbtn" onClick="{{ c.onPick }}" style="width:100%; display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer; border:1px solid var(--line); background:transparent; border-radius:11px; padding:10px 13px; margin-bottom:6px; opacity:.85;">
+                <span style="width:30px; height:30px; border-radius:{{ c.avatarRadius }}; background:var(--panel2); color:var(--muted); display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; flex-shrink:0;">{{ c.init }}</span>
+                <span style="flex:1; min-width:0;"><span style="display:block; font-size:13px; font-weight:600;">{{ c.name }}</span><span style="display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--faint);">not mapped to this role</span></span>
+              </button>
+            </sc-for>
+          </sc-if>
+          <button class="aresbtn" onClick="{{ clearAssign }}" style="width:100%; margin-top:6px; border:1px dashed var(--line); background:transparent; color:var(--muted); cursor:pointer; padding:10px; border-radius:11px; font-size:12.5px; font-weight:600;">Clear assignment</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- EMAIL COMPOSER MODAL -->
+  <sc-if value="{{ showEmail }}" hint-placeholder-val="">
+    <div class="aresov" onClick="{{ closeModal }}" style="position:fixed; inset:0; z-index:100; background:rgba(4,8,20,.66); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:820px; max-height:90vh; overflow-y:auto; border-radius:18px; border:1px solid var(--line); background:var(--panel); box-shadow:var(--shadow);">
+        <div style="padding:18px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px;"><span style="font-size:16px;">✉</span><div><div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.8px; color:var(--faint);">APPROVED RELEASE EMAIL · {{ incId }}</div><div style="font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; margin-top:2px;">Compose release</div></div><button class="aresbtn" onClick="{{ closeModal }}" style="margin-left:auto; border:1px solid var(--line); background:var(--panel2); color:var(--muted); cursor:pointer; width:32px; height:32px; border-radius:8px; font-size:15px;">×</button></div>
+        <div style="padding:20px 24px; display:grid; grid-template-columns:1.15fr 1fr; gap:22px;">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); margin-bottom:6px;">FROM</div>
+            <div style="font-size:13px; padding:9px 12px; border-radius:9px; background:var(--panel2); border:1px solid var(--line); margin-bottom:14px;">Global IT Communications &lt;global.it.communications@birgma.com&gt;</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); margin-bottom:6px;">SUBJECT</div>
+            <input class="aresin" value="{{ emailSubject }}" onInput="{{ setEmailSubject }}" style="width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13.5px; font-weight:600; margin-bottom:14px;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint); margin-bottom:6px;">BODY</div>
+            <textarea class="aresin" value="{{ emailBody }}" onInput="{{ setEmailBody }}" style="width:100%; min-height:230px; background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:12px 14px; color:var(--text); font-size:13px; line-height:1.6; font-family:'IBM Plex Sans',sans-serif; resize:vertical;"></textarea>
+          </div>
+          <div>
+            <div style="display:flex; align-items:center; margin-bottom:6px;"><span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.6px; color:var(--faint);">RECIPIENTS</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted);">To {{ toCount }} · Bcc {{ bccCount }}</span></div>
+            <div style="font-size:11px; color:var(--faint); margin-bottom:12px; line-height:1.5;">Pick who receives it, and who is blind-copied. Directory synced from Entra ID.</div>
+            <div style="display:flex; flex-direction:column; gap:7px; max-height:300px; overflow-y:auto; padding-right:2px;">
+              <sc-for list="{{ recipientsView }}" as="r" hint-placeholder-count="7">
+                <div style="display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:10px; border:1px solid {{ r.border }}; background:{{ r.rowBg }};">
+                  <span style="width:28px; height:28px; border-radius:{{ r.avatarRadius }}; background:var(--panel2); color:var(--muted); display:grid; place-items:center; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; flex-shrink:0;">{{ r.init }}</span>
+                  <span style="flex:1; min-width:0;"><span style="display:block; font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</span><span style="display:block; font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.email }}</span></span>
+                  <div style="display:flex; gap:3px; flex-shrink:0;">
+                    <button class="aresbtn" onClick="{{ r.setTo }}" style="cursor:pointer; border:1px solid {{ r.toBorder }}; background:{{ r.toBg }}; color:{{ r.toColor }}; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:4px 8px; border-radius:6px;">To</button>
+                    <button class="aresbtn" onClick="{{ r.setBcc }}" style="cursor:pointer; border:1px solid {{ r.bccBorder }}; background:{{ r.bccBg }}; color:{{ r.bccColor }}; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; padding:4px 8px; border-radius:6px;">Bcc</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid var(--line); display:flex; align-items:center; gap:14px;">
+          <span style="font-size:12px; color:var(--muted);"><span style="color:var(--ok); font-weight:700;">✓</span> Approved by Anna Svensson · Incident Commander</span>
+          <button class="aresbtn" onClick="{{ sendEmail }}" style="margin-left:auto; border:none; background:var(--grad); color:#fff; cursor:pointer; padding:11px 24px; border-radius:10px; font-size:13.5px; font-weight:600; box-shadow:0 10px 24px -10px var(--brandA);">Send release ({{ totalRecips }})</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <sc-if value="{{ showDelete }}" hint-placeholder-val="">
+    <div class="aresov" onClick="{{ closeModal }}" style="position:fixed; inset:0; z-index:100; background:rgba(4,8,20,.66); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div onClick="{{ stop }}" style="width:100%; max-width:440px; border-radius:18px; border:1px solid var(--line); background:var(--panel); box-shadow:var(--shadow); padding:26px;">
+        <div style="width:46px; height:46px; border-radius:12px; background:color-mix(in srgb, var(--accent) 18%, transparent); display:grid; place-items:center; font-size:22px; color:var(--accent); margin-bottom:16px;">🗑</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700; margin-bottom:8px;">Delete {{ deleteLabel }}?</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:20px;">This permanently removes the incident record, its timeline, hypotheses, evidence and actions. This cannot be undone.</div>
+        <div style="display:flex; gap:10px;"><button class="aresbtn" onClick="{{ closeModal }}" style="flex:1; border:1px solid var(--line); background:var(--panel2); color:var(--text); cursor:pointer; padding:11px; border-radius:10px; font-size:13px; font-weight:600;">Cancel</button><button class="aresbtn" onClick="{{ confirmDelete }}" style="flex:1; border:none; background:var(--grad-hot); color:#fff; cursor:pointer; padding:11px; border-radius:10px; font-size:13px; font-weight:600;">Delete incident</button></div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1360,&quot;height&quot;:900},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;command&quot;,&quot;daylight&quot;,&quot;carbon&quot;],&quot;default&quot;:&quot;command&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Appearance&quot;},&quot;isAdmin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Access&quot;}}">
+class Component extends DCLogic {
+  ROLES = [
+    { key:'admin', label:'Administrator', kind:'platform', glyph:'◆', desc:'Full platform configuration, Entra role mapping and security settings.' },
+    { key:'ic', label:'Incident Commander', kind:'incident', glyph:'★', desc:'Owns coordination and decision-making for the incident.' },
+    { key:'deputy', label:'Deputy Commander', kind:'incident', glyph:'☆', desc:'Backs up and relieves the Incident Commander.' },
+    { key:'tl', label:'Technical Lead', kind:'incident', glyph:'⚙', desc:'Directs technical investigation and remediation.' },
+    { key:'ops', label:'Operations Lead', kind:'incident', glyph:'▤', desc:'Coordinates hands-on operational execution.' },
+    { key:'cl', label:'Communications Lead', kind:'incident', glyph:'✉', desc:'Owns stakeholder and customer communications.' },
+    { key:'scribe', label:'Scribe', kind:'incident', glyph:'≡', desc:'Records events, decisions and actions (AI-assisted).' },
+    { key:'owner', label:'Service Owner', kind:'incident', glyph:'◈', desc:'Represents and validates the affected service.' },
+    { key:'sme', label:'Subject-Matter Expert', kind:'incident', glyph:'✦', desc:'Deep expertise on the affected domain.' },
+    { key:'security', label:'Security Lead', kind:'incident', glyph:'⛉', desc:'Engaged whenever a cyber incident is suspected.' },
+    { key:'liaison', label:'Customer Liaison', kind:'incident', glyph:'☎', desc:'Front-line and customer-impact representation.' },
+    { key:'exec', label:'Executive Sponsor', kind:'incident', glyph:'♛', desc:'Business accountability and escalation authority.' },
+    { key:'vendor', label:'Vendor Coordinator', kind:'incident', glyph:'⇄', desc:'Manages external providers and vendor bridges.' },
+    { key:'responder', label:'Responder', kind:'platform', glyph:'●', desc:'Can join incidents and edit incident data.' },
+    { key:'viewer', label:'Stakeholder', kind:'platform', glyph:'○', desc:'Read-only visibility for stakeholders.' }
+  ];
+  ROSTER_SLOTS = ['ic','deputy','tl','cl','scribe','owner','security','vendor'];
+  EVIDENCE_KINDS = [
+    { k:'log', label:'LOG', glyph:'≣', c:'#8a63d2' },
+    { k:'metric', label:'METRIC', glyph:'◔', c:'#2E93E6' },
+    { k:'screenshot', label:'SCREEN', glyph:'▤', c:'#37d39b' },
+    { k:'config', label:'CONFIG', glyph:'⚙', c:'#ffb020' },
+    { k:'link', label:'LINK', glyph:'↗', c:'#6c7fb0' },
+    { k:'file', label:'FILE', glyph:'▢', c:'#ff3d6e' }
+  ];
+  TYPE_COLORS = { CHANGE:'#8a63d2', ALERT:'#ff3d6e', INCIDENT:'#2E93E6', ROSTER:'#2E93E6', MESSAGE:'#6c7fb0', SCRIBE:'#37d39b', DECISION:'#ffb020', MILESTONE:'#37d39b' };
+  TYPE_ORDER = ['ALERT','CHANGE','MESSAGE','DECISION','SCRIBE','MILESTONE','INCIDENT','ROSTER'];
+  _n = 1000;
+
+  constructor(props){ super(props); this.state = this._initState(); }
+  uid(p){ return (p||'x') + (this._n++); }
+  now(){ return new Date().toTimeString().slice(0,8); }
+
+  _initState(){
+    return {
+      view:'incidents', theme:'command', isAdmin:true,
+      activeId:'INC-2026-0047',
+      draft:null, draftMode:null, modal:null, assignSlot:null, emailKey:null, emailDraft:null, deleteId:null, lastEmail:null, syncStatus:'Last Entra ID sync 4 min ago · 12 principals.',
+      oncall:{ schedules:[
+        { id:'sc-pay', team:'Payment Platform', tz:'CET', rotation:'Weekly · hand-off Mon 09:00', shifts:[ {id:'sh1', who:'u-erik', label:'Primary', state:'on'}, {id:'sh2', who:'u-sara', label:'Secondary', state:'on'}, {id:'sh3', who:'u-omar', label:'Primary (next)', state:'upcoming'} ] },
+        { id:'sc-sec', team:'Security Operations', tz:'CET', rotation:'Daily · 24×7 follow-the-sun', shifts:[ {id:'sh4', who:'u-lena', label:'Primary', state:'on'}, {id:'sh5', who:'u-omar', label:'Manager on-call', state:'on'} ] } ] },
+      escalation:[
+        { id:'ep-sev1', name:'SEV-1 · Payment', steps:[ {id:'s1', after:'0 min', target:'Primary on-call · Payment', via:'Teams · Push'}, {id:'s2', after:'5 min', target:'Secondary on-call · Payment', via:'Push · SMS'}, {id:'s3', after:'10 min', target:'Incident Commander', via:'Phone call'}, {id:'s4', after:'15 min', target:'Executive Sponsor', via:'Phone call'} ] },
+        { id:'ep-sev2', name:'SEV-2 · Default', steps:[ {id:'s1', after:'0 min', target:'Primary on-call', via:'Teams · Push'}, {id:'s2', after:'15 min', target:'Team manager', via:'Push · SMS'} ] } ],
+      pages:[ {id:'pg1', target:'Erik Nilsson · Primary on-call', via:'Teams · Push', state:'Acknowledged', at:'21:41', ackAt:'21:41'}, {id:'pg2', target:'Sara Pettersson · Secondary', via:'Push · SMS', state:'Acknowledged', at:'21:46', ackAt:'21:47'}, {id:'pg3', target:'Anna Svensson · Incident Commander', via:'Phone call', state:'Paging', at:'21:51', ackAt:null} ],
+      runbooks:[
+        { id:'rb1', title:'Roll back a bad payment-gateway change', service:'store-payment-svc', trigger:'Payment TLS errors after a change', owner:'Payment Platform', lastRun:'in use now', steps:[ {id:'r1', text:'Confirm failure onset correlates with a recent change (CHG ID).', done:true}, {id:'r2', text:'Verify certificate chain against the gateway trust store.', done:true}, {id:'r3', text:'Get IC approval to roll back the change.', done:true}, {id:'r4', text:'Execute rollback via Azure DevOps pipeline.', done:false}, {id:'r5', text:'Confirm transaction success rate recovers ≥ 95%.', done:false} ] },
+        { id:'rb2', title:'Payment gateway failover', service:'store-payment-svc', trigger:'Primary gateway unavailable', owner:'Payment Platform', lastRun:'Q1 drill', steps:[ {id:'r1', text:'Declare gateway provider outage & page vendor coordinator.', done:false}, {id:'r2', text:'Switch routing to secondary acquirer.', done:false}, {id:'r3', text:'Validate test transaction on secondary.', done:false} ] },
+        { id:'rb3', title:'Entra ID sign-in degradation', service:'entra-id', trigger:'MFA / sign-in failures spike', owner:'Security Operations', lastRun:'—', steps:[ {id:'r1', text:'Check recent Conditional Access policy changes.', done:false}, {id:'r2', text:'Review Entra service health & sign-in logs.', done:false}, {id:'r3', text:'Roll back offending policy if identified.', done:false} ] } ],
+      statusPage:{ published:true, url:'status.birgma.com', components:[ {id:'c1', name:'In-store card payments — Sweden', state:'outage'}, {id:'c2', name:'In-store card payments — other regions', state:'operational'}, {id:'c3', name:'Online checkout', state:'operational'}, {id:'c4', name:'Staff sign-in (Entra ID)', state:'degraded'}, {id:'c5', name:'Cash & receipts', state:'operational'} ], updates:[ {id:'su1', t:'22:05 CET', state:'identified', title:'Card payments disrupted in Sweden', body:'We identified a change affecting card payments in Swedish stores and are rolling it back. Cash payments are unaffected.'}, {id:'su2', t:'21:50 CET', state:'investigating', title:'Investigating card payment failures', body:'We are investigating reports of card payment failures in some Swedish stores.'} ] },
+      slos:[ {id:'slo1', service:'store-payment-svc', objective:'Payment success rate', target:99.9, current:99.2, budgetUsed:82, window:'30d', burn:'14×'}, {id:'slo2', service:'checkout-web', objective:'Checkout availability', target:99.95, current:99.94, budgetUsed:38, window:'30d', burn:'1.1×'}, {id:'slo3', service:'entra-id', objective:'Sign-in availability', target:99.9, current:99.7, budgetUsed:61, window:'30d', burn:'2.4×'}, {id:'slo4', service:'erp-core', objective:'API latency < 500ms', target:99.5, current:99.8, budgetUsed:12, window:'30d', burn:'0.3×'} ],
+      links:{ 'INC-2026-0047':[{id:'INC-2026-0046', rel:'related'}] },
+      directory:[
+        { id:'u-anna', name:'Anna Svensson', email:'anna.svensson@birgma.com', type:'user', roles:['admin','ic'] },
+        { id:'u-omar', name:'Omar Haddad', email:'omar.haddad@birgma.com', type:'user', roles:['ic','deputy'] },
+        { id:'u-lena', name:'Lena Berg', email:'lena.berg@birgma.com', type:'user', roles:['security','deputy'] },
+        { id:'u-erik', name:'Erik Nilsson', email:'erik.nilsson@birgma.com', type:'user', roles:['tl','ops','sme'] },
+        { id:'u-maria', name:'Maria Keller', email:'maria.keller@birgma.com', type:'user', roles:['cl','liaison'] },
+        { id:'u-johan', name:'Johan Lund', email:'johan.lund@birgma.com', type:'user', roles:['scribe'] },
+        { id:'u-sara', name:'Sara Pettersson', email:'sara.pettersson@birgma.com', type:'user', roles:['owner','sme'] },
+        { id:'u-david', name:'David Vega', email:'david.vega@vendor-gateway.com', type:'user', roles:['vendor'] },
+        { id:'g-pay', name:'Payment Platform Team', email:'payments@birgma.com', type:'group', roles:['owner','responder'] },
+        { id:'g-sec', name:'Security Operations', email:'secops@birgma.com', type:'group', roles:['security','responder'] },
+        { id:'g-lead', name:'Leadership', email:'leadership@birgma.com', type:'group', roles:['exec','viewer'] },
+        { id:'g-store', name:'Store Managers — Sweden', email:'stores-se@biltema.com', type:'group', roles:['viewer'] }
+      ],
+      incidents:[
+        {
+          id:'INC-2026-0047', title:'Payment failures in Sweden', sev:'SEV-1', status:'Investigating',
+          started:'21:43 CET', duration:'54 min', impact:'38 stores unable to process card payments. Cash payments unaffected.',
+          serviceName:'store-payment-svc', country:'Sweden',
+          sel:{ business:'Store payments blocked', geo:'One country', users:'Customers', data:'No data impact', duration:'> 1 hour', service:'Payment', regulatory:'PCI DSS' },
+          assign:{ ic:'u-anna', deputy:'u-omar', tl:'u-erik', cl:'u-maria', scribe:'u-johan', owner:'u-sara', security:'u-lena', vendor:'u-david' },
+          timeline:[
+            { id:'t1', t:'21:39:17', type:'CHANGE', src:'Azure DevOps', text:'CHG-18442 deployment completed — payment-gateway TLS certificate rotation.' },
+            { id:'t2', t:'21:41:06', type:'ALERT', src:'Datadog', text:'TLS handshake failure rate exceeds threshold on store-payment-svc → external gateway.' },
+            { id:'t3', t:'21:42:30', type:'ALERT', src:'Sentinel', text:'Correlated payment decline anomaly detected across 38 Swedish stores.' },
+            { id:'t4', t:'21:43:00', type:'INCIDENT', src:'ARES', text:'SEV-1 declared via Teams /incident. Record + ServiceNow ticket created.' },
+            { id:'t5', t:'21:43:40', type:'ROSTER', src:'Graph', text:'Teams channel + bridge created. IC, Technical Lead, Comms Lead invited and assigned.' },
+            { id:'t6', t:'21:48:12', type:'MESSAGE', src:'Teams', text:'Erik Nilsson: errors line up almost exactly with the cert deploy — checking the chain.' },
+            { id:'t7', t:'21:52:10', type:'SCRIBE', src:'AI Scribe', text:'Failure onset correlated to CHG-18442 (+3m 49s). Hypothesis registered: certificate deployment.' },
+            { id:'t8', t:'22:10:41', type:'DECISION', src:'ARES', text:'IC approved rollback of CHG-18442. Owner: Payment Platform.' },
+            { id:'t9', t:'22:19:50', type:'CHANGE', src:'Azure DevOps', text:'Rollback of CHG-18442 initiated in production.' },
+            { id:'t10', t:'22:37:40', type:'MILESTONE', src:'Datadog', text:'Service recovered — TLS errors return to baseline after rollback.' },
+            { id:'t11', t:'22:41:05', type:'MILESTONE', src:'ARES', text:'Transaction success rate ≥ 96% across all 38 stores. Monitoring for stability.' }
+          ],
+          hypos:[
+            { id:'h4', title:'Certificate deployment CHG-18442 broke the TLS chain', forE:'Failures began +3m after deploy; rollback fully recovered service.', againstE:'—', owner:'Payment Platform', status:'Confirmed' },
+            { id:'h3', title:'Upstream payment provider outage', forE:'External API latency briefly elevated at onset.', againstE:'Provider status page normal; only Swedish stores affected.', owner:'Vendor Coordinator', status:'Probable' },
+            { id:'h2', title:'Firewall rule change blocking gateway egress', forE:'A network change was detected at 21:39.', againstE:'Only one region affected; change was an unrelated ACL.', owner:'Security Lead', status:'Investigating' },
+            { id:'h1', title:'Certificate expired', forE:'TLS handshake failures are consistent with cert issues.', againstE:'Certificate remains valid through 2027.', owner:'Network Lead', status:'Rejected' }
+          ],
+          evidence:[
+            { id:'e1', kind:'config', title:'CHG-18442 change record', source:'Azure DevOps', ref:'CHG-18442', by:'A. Svensson', t:'22:02', note:'Certificate rotation deployment; completed 21:39:17, includes new intermediate CA.' },
+            { id:'e2', kind:'metric', title:'TLS handshake error-rate graph', source:'Datadog', ref:'dash/pay-tls', by:'AI Scribe', t:'21:44', note:'Error rate steps from 0 to 240/min at 21:41:06, three minutes after the deploy.' },
+            { id:'e3', kind:'log', title:'Gateway handshake failure logs', source:'store-payment-svc', ref:'log bundle #4471', by:'E. Nilsson', t:'22:08', note:'unknown_ca alerts on outbound TLS to gateway endpoint.' },
+            { id:'e4', kind:'screenshot', title:'POS terminal decline screen — Store 214', source:'Store manager', ref:'IMG_2231', by:'M. Keller', t:'21:55', note:'Front-line confirmation of card decline; cash unaffected.' }
+          ],
+          comms:{
+            tech:{ approved:false, body:'Increased TLS handshake failures between the store-payment service and the external gateway began three minutes after deployment CHG-18442. The deployment has been rolled back and transaction success rates are recovering.' },
+            exec:{ approved:false, body:'Card payments were disrupted in 38 Swedish stores; cash payments continued to operate. The suspected change has been reversed and service is recovering. No evidence of data exposure. Next update at 23:15 CET.' },
+            sd:{ approved:false, body:'Known issue: card payment failures in Swedish stores. Workaround: use the secondary terminal or cash where available. Do not restart payment terminals unless instructed.' }
+          }
+        },
+        {
+          id:'INC-2026-0046', title:'Entra ID sign-in failures — Nordic tenant', sev:'SEV-2', status:'Investigating',
+          started:'19:12 CET', duration:'1h 20m', impact:'Intermittent MFA failures delaying staff sign-in across Norway and Sweden.',
+          serviceName:'entra-id', country:'Norway · Sweden',
+          sel:{ business:'Internal tooling only', geo:'One country', users:'Internal users', data:'No data impact', duration:'> 1 hour', service:'Identity', regulatory:'None' },
+          assign:{ ic:'u-omar', deputy:null, tl:'u-lena', cl:'u-maria', scribe:null, owner:null, security:'u-lena', vendor:null },
+          timeline:[
+            { id:'t1', t:'19:12:00', type:'ALERT', src:'Entra', text:'Sign-in failure rate elevated for Conditional Access MFA challenge.' },
+            { id:'t2', t:'19:18:20', type:'INCIDENT', src:'ARES', text:'SEV-2 declared. War room opened.' },
+            { id:'t3', t:'19:40:10', type:'SCRIBE', src:'AI Scribe', text:'Correlated to a Conditional Access policy change 15 minutes prior.' }
+          ],
+          hypos:[
+            { id:'h1', title:'Conditional Access policy change', forE:'Failures began after policy publish.', againstE:'—', owner:'Security Lead', status:'Probable' },
+            { id:'h2', title:'MFA provider latency', forE:'Some timeouts observed.', againstE:'Provider healthy.', owner:'Vendor Coordinator', status:'Investigating' }
+          ],
+          evidence:[
+            { id:'e1', kind:'config', title:'Conditional Access policy diff', source:'Entra', ref:'CA-Policy-Nordic', by:'L. Berg', t:'19:44', note:'Policy scope widened 15 min before onset.' }
+          ],
+          comms:{ tech:{ approved:false, body:'Sign-in MFA failures under investigation; a recent Conditional Access change is the leading hypothesis.' }, exec:{ approved:false, body:'Some staff are experiencing delayed sign-in in Norway and Sweden. Customer services are unaffected.' }, sd:{ approved:false, body:'Known issue: intermittent MFA prompts failing. Retry after 60 seconds; do not re-register devices.' } }
+        },
+        {
+          id:'INC-2026-0045', title:'E-commerce checkout latency', sev:'SEV-3', status:'Resolved',
+          started:'Mon 14:05 CET', duration:'2h 05m', impact:'Checkout P95 latency elevated to 4s online; no failed orders.',
+          serviceName:'checkout-web', country:'Online',
+          sel:{ business:'Degraded checkout', geo:'Global', users:'Customers', data:'No data impact', duration:'> 1 hour', service:'E-commerce', regulatory:'None' },
+          assign:{ ic:'u-anna', deputy:null, tl:'u-erik', cl:null, scribe:null, owner:'g-pay', security:null, vendor:null },
+          timeline:[
+            { id:'t1', t:'14:05:00', type:'ALERT', src:'Datadog', text:'Checkout P95 latency crosses 3.5s threshold.' },
+            { id:'t2', t:'14:20:00', type:'DECISION', src:'ARES', text:'Scaled checkout service; added cache warm-up.' },
+            { id:'t3', t:'16:10:00', type:'MILESTONE', src:'Datadog', text:'Latency back under 1.5s. Incident resolved.' }
+          ],
+          hypos:[ { id:'h1', title:'Cache stampede after deploy', forE:'Latency spiked post-deploy; resolved after warm-up.', againstE:'—', owner:'SRE', status:'Confirmed' } ],
+          evidence:[ { id:'e1', kind:'metric', title:'Checkout latency P95', source:'Datadog', ref:'dash/checkout', by:'AI Scribe', t:'16:12', note:'Clear spike-and-recovery aligned to deploy + warm-up.' } ],
+          comms:{ tech:{ approved:true, body:'Checkout latency was elevated due to a cache stampede after deploy; resolved by scaling and cache warm-up.' }, exec:{ approved:true, body:'Online checkout was slower than usual for ~2 hours. No orders were lost. Resolved.' }, sd:{ approved:true, body:'Resolved: online checkout speed is back to normal.' } }
+        }
+      ]
+    };
+  }
+
+  themes = {
+    command: { '--app-bg':'linear-gradient(165deg,#0b1330 0%,#0a1024 60%,#080d1e 100%)','--shell':'#0c1430','--panel':'#111c42','--panel2':'#0e1738','--line':'rgba(150,175,255,.13)','--text':'#eef2ff','--muted':'#9fb0d8','--faint':'#6c7fb0','--chip':'rgba(150,175,255,.10)','--nav-on':'rgba(120,160,255,.16)','--brandA':'#2E93E6','--brandB':'#3358d4','--accent':'#ff3d6e','--ok':'#37d39b','--warn':'#ffb020','--grad':'linear-gradient(135deg,#3358d4,#2E93E6)','--grad-hot':'linear-gradient(135deg,#ff3d6e,#ff7a45)','--shadow':'0 24px 60px -26px rgba(0,0,0,.75)','--lk-dark':'flex','--lk-light':'none' },
+    daylight: { '--app-bg':'linear-gradient(165deg,#eef2fb,#e4ebf7)','--shell':'#ffffff','--panel':'#ffffff','--panel2':'#f4f7fd','--line':'rgba(20,40,90,.11)','--text':'#111a3a','--muted':'#57678f','--faint':'#8a97b8','--chip':'rgba(17,80,170,.06)','--nav-on':'rgba(17,122,192,.10)','--brandA':'#117AC0','--brandB':'#1B3B9B','--accent':'#DE0A45','--ok':'#0f9d68','--warn':'#c77700','--grad':'linear-gradient(135deg,#1B3B9B,#117AC0)','--grad-hot':'linear-gradient(135deg,#DE0A45,#ff6a3d)','--shadow':'0 20px 44px -24px rgba(20,40,90,.34)','--lk-dark':'none','--lk-light':'flex' },
+    carbon: { '--app-bg':'linear-gradient(165deg,#0a0c12,#060709)','--shell':'#0b0d14','--panel':'#101319','--panel2':'#0c0f15','--line':'rgba(255,255,255,.09)','--text':'#f2f4f8','--muted':'#9aa3b4','--faint':'#5e6676','--chip':'rgba(255,255,255,.06)','--nav-on':'rgba(255,255,255,.08)','--brandA':'#3aa0ff','--brandB':'#4b6bff','--accent':'#ff2d5e','--ok':'#2fd98a','--warn':'#ffb020','--grad':'linear-gradient(135deg,#4b6bff,#3aa0ff)','--grad-hot':'linear-gradient(135deg,#ff2d5e,#ff7a45)','--shadow':'0 24px 56px -20px rgba(0,0,0,.85)','--lk-dark':'flex','--lk-light':'none' }
+  };
+
+  componentDidMount(){ if(this.props.theme && this.themes[this.props.theme]) this.setState({theme:this.props.theme}); this._apply(); }
+  componentDidUpdate(){ this._apply(); }
+  _apply(){
+    const el=this.rootRef; if(!el) return;
+    const t=this.themes[this.state.theme||'command']||this.themes.command;
+    for(const k in t) el.style.setProperty(k,t[k]);
+    el.querySelectorAll('[data-nav]').forEach(n=>{ const on=n.getAttribute('data-nav')===this.state.view; n.style.background=on?'var(--nav-on)':'transparent'; n.style.color=on?'var(--text)':'var(--muted)'; n.style.fontWeight=on?'600':'500'; });
+  }
+
+  setView=(v)=>this.setState({view:v});
+  setTheme=(id)=>this.setState({theme:id});
+  toggleAdmin=()=>this.setState(s=>({ isAdmin:!s.isAdmin, view: (!s.isAdmin? s.view : (s.view==='admin'?'incidents':s.view)) }));
+  closeModal=()=>this.setState({modal:null, assignSlot:null, emailKey:null, emailDraft:null, deleteId:null});
+  stop=(e)=>{ e.stopPropagation(); };
+
+  getActive(){ return this.state.incidents.find(i=>i.id===this.state.activeId) || this.state.incidents[0] || null; }
+  ini(s){ return (s||'?').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase(); }
+  userById(id){ return this.state.directory.find(u=>u.id===id) || null; }
+  role(k){ return this.ROLES.find(r=>r.key===k); }
+  computeSev(sel){
+    const critical=['Payment','Identity','ERP','E-commerce'].includes(sel.service);
+    const customer=sel.users==='Customers';
+    if(sel.data==='Confirmed exposure') return {level:'SEV-1', reason:'Confirmed data exposure forces the highest severity regardless of other dimensions.'};
+    if(critical && customer && sel.business==='Store payments blocked') return {level:'SEV-1', reason:'Customer-facing payment service fully blocked — a critical revenue path. Auto-classified SEV-1; PCI DSS notification path engaged.'};
+    if(critical && customer) return {level:'SEV-2', reason:'A critical customer-facing service is degraded but not fully blocked. Classified SEV-2.'};
+    if(critical) return {level:'SEV-2', reason:'A critical service is affected without confirmed customer impact. Classified SEV-2.'};
+    if(sel.data==='Exposure suspected') return {level:'SEV-2', reason:'Suspected data exposure escalates to SEV-2 pending security review.'};
+    return {level:'SEV-3', reason:'No critical service or customer impact detected. Classified SEV-3 for standard handling.'};
+  }
+  sevBg(level){ return ({'SEV-1':'linear-gradient(135deg,#DE0A45,#ff6a3d)','SEV-2':'linear-gradient(135deg,#c77700,#ffb020)','SEV-3':'linear-gradient(135deg,#3358d4,#2E93E6)'})[level]; }
+  statusColor(st){ return st==='Resolved'?'var(--ok)':(st==='Monitoring'?'var(--brandA)':'var(--accent)'); }
+  _hypoStyle(s){ const m={Confirmed:['#37d39b','rgba(55,211,155,.14)'],Probable:['#ffb020','rgba(255,176,32,.14)'],Investigating:['#2E93E6','rgba(46,147,230,.14)'],Rejected:['#8a97b8','rgba(138,151,184,.14)'],Suggested:['#a78bfa','rgba(167,139,250,.14)']}; return m[s]||m.Suggested; }
+
+  // ---- active-incident mutation ----
+  _upd(mut){ this.setState(s=>({ incidents: s.incidents.map(i=> i.id===s.activeId ? mut({...i}) : i) })); }
+  updateInc=(f,v)=>this._upd(i=>({...i,[f]:v}));
+  updItem=(coll,id,f,v)=>this._upd(i=>({...i,[coll]:i[coll].map(x=>x.id===id?{...x,[f]:v}:x)}));
+  delItem=(coll,id)=>this._upd(i=>({...i,[coll]:i[coll].filter(x=>x.id!==id)}));
+
+  // timeline
+  addTimeline=()=>this._upd(i=>({...i, timeline:[...i.timeline, {id:this.uid('t'), t:this.now(), type:'MESSAGE', src:'Manual entry', text:'New event — click to edit'}]}));
+  cycleType=(id)=>this._upd(i=>({...i, timeline:i.timeline.map(x=>{ if(x.id!==id) return x; const o=this.TYPE_ORDER; return {...x, type:o[(o.indexOf(x.type)+1)%o.length]}; })}));
+  // hypotheses
+  addHypo=()=>this._upd(i=>({...i, hypos:[{id:this.uid('h'), title:'New hypothesis — click to edit', forE:'—', againstE:'—', owner:'Unassigned', status:'Suggested'}, ...i.hypos]}));
+  cycleHypo=(id)=>this._upd(i=>({...i, hypos:i.hypos.map(x=>{ if(x.id!==id) return x; const o=['Suggested','Investigating','Probable','Confirmed','Rejected']; return {...x, status:o[(o.indexOf(x.status)+1)%o.length]}; })}));
+  // evidence
+  addEvidence=()=>this._upd(i=>({...i, evidence:[...(i.evidence||[]), {id:this.uid('e'), kind:'log', title:'New evidence — click to edit', source:'—', ref:'—', by:'Anna Svensson', t:this.now().slice(0,5), note:'Describe what this evidence shows.'}]}));
+  cycleKind=(id)=>this._upd(i=>({...i, evidence:i.evidence.map(x=>{ if(x.id!==id) return x; const o=this.EVIDENCE_KINDS.map(k=>k.k); return {...x, kind:o[(o.indexOf(x.kind)+1)%o.length]}; })}));
+  // actions
+  addAction=()=>this._upd(i=>({...i, actions:[...(i.actions||[]), {id:this.uid('a'), weak:false, desc:'New corrective action — click to edit', owner:'Unassigned', due:'TBD', prio:'P2', status:'Open'}]}));
+  toggleAction=(id)=>this._upd(i=>({...i, actions:i.actions.map(x=>{ if(x.id!==id||x.weak) return x; const o=['Open','In progress','Done']; return {...x, status:o[(o.indexOf(x.status)+1)%o.length]}; })}));
+  cyclePrio=(id)=>this._upd(i=>({...i, actions:i.actions.map(x=>{ if(x.id!==id||x.weak) return x; const o=['P1','P2','P3']; return {...x, prio:o[(o.indexOf(x.prio)+1)%o.length]}; })}));
+  // comms
+  approveComm=(k)=>this._upd(i=>({...i, comms:{...i.comms, [k]:{...i.comms[k], approved:!i.comms[k].approved}}}));
+  editComm=(k,v)=>this._upd(i=>({...i, comms:{...i.comms, [k]:{...i.comms[k], body:v}}}));
+  resolveIncident=()=>{ this._upd(i=>({...i, status:'Resolved', timeline:[...i.timeline, {id:this.uid('t'), t:this.now(), type:'MILESTONE', src:'ARES', text:'Incident resolved by IC. Moving to post-incident review.'}]})); this.setState({view:'rca'}); };
+  // severity dims (active)
+  setDim=(k,v)=>this._upd(i=>{ const sel={...i.sel,[k]:v}; const s=this.computeSev(sel); return {...i, sel, sev:s.level}; });
+
+  // ---- role assignment ----
+  openAssign=(slot)=>this.setState({modal:'assign', assignSlot:slot});
+  setAssign=(slot,userId)=>{ this._upd(i=>({...i, assign:{...i.assign, [slot]:userId}})); this.closeModal(); };
+  clearAssign=()=>{ const slot=this.state.assignSlot; this._upd(i=>({...i, assign:{...i.assign, [slot]:null}})); this.closeModal(); };
+
+  // ---- incidents CRUD ----
+  selectIncident=(id)=>this.setState({activeId:id, view:'warroom'});
+  newIncident=()=>{ const draft={ id:this._nextId(), title:'', sev:'SEV-3', status:'Investigating', started:this.now().slice(0,5)+' CET', duration:'0 min', impact:'', serviceName:'', country:'', sel:{business:'Internal tooling only',geo:'One store',users:'Internal users',data:'No data impact',duration:'< 15 min',service:'None',regulatory:'None'}, assign:{}, timeline:[], hypos:[], evidence:[], comms:{tech:{approved:false,body:''},exec:{approved:false,body:''},sd:{approved:false,body:''}} }; this.setState({view:'declare', draftMode:'create', draft}); };
+  editIncident=(id)=>{ const inc=this.state.incidents.find(i=>i.id===id); this.setState({view:'declare', draftMode:'edit', draft:JSON.parse(JSON.stringify(inc)), activeId:id}); };
+  _nextId(){ const nums=this.state.incidents.map(i=>parseInt(i.id.split('-')[2],10)); const max=nums.length?Math.max(...nums):47; return 'INC-2026-'+String(max+1).padStart(4,'0'); }
+  setDraft=(f,v)=>this.setState(s=>({draft:{...s.draft,[f]:v}}));
+  setDraftDim=(k,v)=>this.setState(s=>{ const sel={...s.draft.sel,[k]:v}; const sv=this.computeSev(sel); return {draft:{...s.draft, sel, sev:sv.level}}; });
+  saveDraft=()=>{ this.setState(s=>{ const d={...s.draft}; if(!d.title.trim()) d.title='Untitled incident'; const sv=this.computeSev(d.sel); d.sev=sv.level; if(s.draftMode==='create'){ d.timeline=[{id:this.uid('t'), t:this.now(), type:'INCIDENT', src:'ARES', text:d.sev+' declared. War room + ServiceNow record created.'}]; return {incidents:[d, ...s.incidents], activeId:d.id, view:'warroom', draft:null, draftMode:null}; } else { return {incidents:s.incidents.map(i=>i.id===d.id?d:i), activeId:d.id, view:'warroom', draft:null, draftMode:null}; } }); };
+  cancelDraft=()=>this.setState({draft:null, draftMode:null, view:'incidents'});
+  askDelete=(id)=>this.setState({modal:'delete', deleteId:id});
+  confirmDelete=()=>this.setState(s=>{ const incidents=s.incidents.filter(i=>i.id!==s.deleteId); const activeId = s.activeId===s.deleteId ? (incidents[0]?incidents[0].id:null) : s.activeId; return {incidents, activeId, modal:null, deleteId:null}; });
+
+  // ---- admin ----
+  syncEntra=()=>this.setState({syncStatus:'Entra ID sync complete just now · 12 principals, 0 changes.'});
+  addMapping=()=>this.setState(s=>({directory:[...s.directory, {id:this.uid('u'), name:'New principal', email:'name@birgma.com', type:'user', roles:['viewer']}]}));
+  delMapping=(id)=>this.setState(s=>({directory:s.directory.filter(u=>u.id!==id)}));
+  toggleDirRole=(id,rk)=>this.setState(s=>({directory:s.directory.map(u=>{ if(u.id!==id) return u; const has=u.roles.includes(rk); return {...u, roles: has? u.roles.filter(r=>r!==rk) : [...u.roles, rk]}; })}));
+
+  // ---- email ----
+  openEmail=(k)=>{ const inc=this.getActive();
+    const resolved=inc.status==='Resolved';
+    const tag = resolved ? '' : (inc.sev==='SEV-1' ? ' -- ACTION REQUIRED' : ' -- FOR AWARENESS');
+    const shortTitle={tech:'Technical Update', exec:'Executive Briefing', sd:'Service Desk Advisory'}[k];
+    const subj='Global IT Notification - '+(inc.title||'Incident')+' ('+shortTitle+')'+tag;
+    const headline={tech:'Technical incident update', exec:'Executive incident briefing', sd:'Known issue — customer & store advisory'}[k];
+    const nextUpdate = resolved ? 'This incident is now resolved; no further updates will follow.' : 'The next update will be issued within 60 minutes or as the situation materially changes.';
+    const ref='Reference: '+inc.id+' · Severity '+inc.sev+' · Service '+(inc.serviceName||'—')+(inc.country?(' · '+inc.country):'');
+    const body='Dear colleagues,\n\n'+inc.comms[k].body+'\n\nCurrent status: '+inc.status+'. '+nextUpdate+'\n\nFor assistance or to report related impact, please raise a ticket with the IT Service Desk (birgmabiltema.sdpondemand.manageengine.eu) and reference '+inc.id+'.\n\n'+ref+'\n\nKind regards,\nGlobal IT Communications\nBirgma / Biltema';
+    const recips = k==='exec' ? {'g-lead':'to','g-store':'bcc'} : (k==='sd' ? {'g-store':'to','g-pay':'bcc'} : {'g-pay':'to','g-sec':'bcc'});
+    this.setState({modal:'email', emailKey:k, emailDraft:{subject:subj, headline, body, recips}}); };
+  setEmailField=(f,v)=>this.setState(s=>({emailDraft:{...s.emailDraft,[f]:v}}));
+  setRecip=(id,mode)=>this.setState(s=>{ const r={...s.emailDraft.recips}; if(r[id]===mode) delete r[id]; else r[id]=mode; return {emailDraft:{...s.emailDraft, recips:r}}; });
+  sendEmail=()=>{ const d=this.state.emailDraft; const to=Object.keys(d.recips).filter(k=>d.recips[k]==='to').map(id=>this.userById(id)?this.userById(id).name:id); const bcc=Object.keys(d.recips).filter(k=>d.recips[k]==='bcc'); const k=this.state.emailKey; this._upd(i=>({...i, comms:{...i.comms,[k]:{...i.comms[k], approved:true}}, timeline:[...i.timeline,{id:this.uid('t'),t:this.now(),type:'MESSAGE',src:'Email',text:'Release email “'+d.subject+'” sent — To: '+(to.join(', ')||'—')+'; Bcc: '+bcc.length+' recipient list(s).'}]})); this.setState({modal:null, emailKey:null, emailDraft:null, lastEmail:'Release sent to '+(to.join(', ')||'recipients')+(bcc.length?(' (+'+bcc.length+' Bcc)'):'')+'.'}); };
+
+  eb(fn){ return (e)=>fn(e.currentTarget.innerText.trim()); }
+
+  renderVals(){
+    const S=this.state, inc=this.getActive();
+    const themeOptions=[{id:'command',label:'Command',glyph:'▤'},{id:'daylight',label:'Daylight',glyph:'☀'},{id:'carbon',label:'Carbon',glyph:'◑'}].map(o=>{const a=(S.theme||'command')===o.id; return {...o,onClick:()=>this.setTheme(o.id),bg:a?'var(--grad)':'transparent',color:a?'#fff':'var(--muted)'};});
+
+    // nav
+    const openInc=S.incidents.length;
+    const badge=(txt,hot)=>({badge:txt, badgeBg:hot?'var(--grad-hot)':'var(--chip)', badgeColor:hot?'#fff':'var(--muted)'});
+    const mk=(id,label,glyph,b)=>({id,label,glyph,...(b||{badge:''}),onClick:()=>this.setView(id)});
+    const hypoActive = inc? inc.hypos.filter(h=>h.status!=='Rejected'&&h.status!=='Confirmed').length : 0;
+    const openActions = inc&&inc.actions? inc.actions.filter(a=>!a.weak&&a.status!=='Done').length : 0;
+    const unappr = inc? Object.values(inc.comms).filter(c=>!c.approved).length : 0;
+    const navOperate=[ mk('incidents','Incidents','▦',badge(String(openInc))), mk('warroom','War Room','▣',badge('LIVE',true)), mk('declare','Declare','＋'), mk('timeline','Timeline · Scribe','≡'), mk('hypotheses','Hypotheses','⑂', hypoActive?badge(String(hypoActive)):null), mk('evidence','Evidence','❖', inc&&inc.evidence&&inc.evidence.length?badge(String(inc.evidence.length)):null) ];
+    const navResolve=[ mk('comms','Communications','✉', unappr?badge(String(unappr)):null), mk('rca','RCA Report','◈'), mk('actions','Corrective Actions','☑', openActions?badge(String(openActions)):null), mk('analytics','Resilience Analytics','◔'), mk('platform','Platform & Security','⬡') ];
+    const pendingPages = S.pages.filter(p=>p.state!=='Acknowledged').length;
+    const breaching = S.slos.filter(s=>s.current<s.target).length;
+    const navReadiness=[ mk('oncall','On-call & Paging','☎', pendingPages?badge(String(pendingPages),true):null), mk('runbooks','Runbooks','▤'), mk('status','Status Page','◉', S.statusPage.published?null:badge('DRAFT')), mk('slo','SLOs & Budget','◔', breaching?badge(String(breaching),true):null) ];
+
+    // on-call / escalation / paging
+    const shiftView=(sh)=>{ const u=this.userById(sh.who); return { label:sh.label, name:u?u.name:'Unassigned', init:u?this.ini(u.name):'?', on:sh.state==='on', stateLabel:sh.state==='on'?'ON CALL':'UPCOMING', dot:sh.state==='on'?'var(--ok)':'var(--faint)', avBg:u?(u.type==='group'?'var(--brandB)':'var(--grad)'):'var(--panel2)' }; };
+    const schedulesView=S.oncall.schedules.map(sc=>({ team:sc.team, rotation:sc.rotation, tz:sc.tz, shifts:sc.shifts.map(shiftView) }));
+    const escalationView=S.escalation.map(ep=>({ name:ep.name, onPage:()=>this.pageNow(ep.name), steps:ep.steps.map((st,i)=>({...st, n:i+1})) }));
+    const pagesView=S.pages.map(p=>({ ...p, ack:p.state==='Acknowledged', pillBg:p.state==='Acknowledged'?'color-mix(in srgb,var(--ok) 15%,transparent)':'color-mix(in srgb,var(--accent) 15%,transparent)', pillColor:p.state==='Acknowledged'?'var(--ok)':'var(--accent)', onAck:()=>this.ackPage(p.id), ackText:p.state==='Acknowledged'?('ack '+p.ackAt):'Acknowledge' }));
+
+    // runbooks
+    const runbooksView=S.runbooks.map(rb=>{ const done=rb.steps.filter(s=>s.done).length; return { ...rb, pct:Math.round(done/rb.steps.length*100)+'%', progress:done+'/'+rb.steps.length, editTitle:this.eb(v=>this.editRunbook(rb.id,'title',v)), onAttach:()=>this.attachRunbook(rb.id), steps:rb.steps.map(st=>({...st, onToggle:()=>this.toggleRunStep(rb.id,st.id), box:st.done?'var(--ok)':'transparent', boxBorder:st.done?'var(--ok)':'var(--line)', mark:st.done?'✓':'', textColor:st.done?'var(--faint)':'var(--text)', strike:st.done?'line-through':'none'})) }; });
+
+    // status page
+    const compMeta={operational:['Operational','var(--ok)'],degraded:['Degraded','var(--warn)'],outage:['Major outage','var(--accent)']};
+    const statusComponents=S.statusPage.components.map(c=>({ name:c.name, label:compMeta[c.state][0], color:compMeta[c.state][1], onCycle:()=>this.cycleComponent(c.id) }));
+    const updMeta={investigating:['Investigating','var(--warn)'],identified:['Identified','var(--brandA)'],monitoring:['Monitoring','var(--brandA)'],resolved:['Resolved','var(--ok)']};
+    const statusUpdates=S.statusPage.updates.map(u=>({ ...u, stLabel:updMeta[u.state][0], stColor:updMeta[u.state][1], onCycleState:()=>this.cycleUpdateState(u.id), onDel:()=>this.delStatusUpdate(u.id), editTitle:this.eb(v=>this.editStatusUpdate(u.id,'title',v)), editBody:this.eb(v=>this.editStatusUpdate(u.id,'body',v)) }));
+    const overallOutage=S.statusPage.components.some(c=>c.state==='outage'), overallDegraded=S.statusPage.components.some(c=>c.state==='degraded');
+    const overallState= overallOutage?['Some systems down','var(--accent)']:(overallDegraded?['Degraded performance','var(--warn)']:['All systems operational','var(--ok)']);
+
+    // SLOs
+    const sloView=S.slos.map(s=>{ const breach=s.budgetUsed>=90; const warn=s.budgetUsed>=60; return { ...s, targetLabel:s.target+'%', currentLabel:s.current+'%', budgetLabel:s.budgetUsed+'%', barW:Math.min(100,s.budgetUsed)+'%', barColor:s.budgetUsed>90?'var(--accent)':(s.budgetUsed>60?'var(--warn)':'var(--ok)'), curColor:s.current<s.target?'var(--warn)':'var(--ok)', burnColor:parseFloat(s.burn)>=2?'var(--accent)':(parseFloat(s.burn)>=1?'var(--warn)':'var(--muted)'), stateLabel:breach?'AT RISK':(warn?'WATCH':'HEALTHY'), stateColor:breach?'var(--accent)':(warn?'var(--warn)':'var(--ok)'), onDeclare:()=>{ const draft={ id:this._nextId(), title:s.objective+' breach — '+s.service, sev:'SEV-3', status:'Investigating', started:this.now().slice(0,5)+' CET', duration:'0 min', impact:'SLO '+s.objective+' at '+s.current+'% vs target '+s.target+'% (error budget '+s.budgetUsed+'% consumed).', serviceName:s.service, country:'—', sel:{business:'Degraded checkout',geo:'Global',users:'Customers',data:'No data impact',duration:'15–60 min',service:'E-commerce',regulatory:'None'}, assign:{}, timeline:[], hypos:[], evidence:[], comms:{tech:{approved:false,body:''},exec:{approved:false,body:''},sd:{approved:false,body:''}} }; this.setState({view:'declare', draftMode:'create', draft}); } }; });
+
+    // linked incidents (war room)
+    const relMeta={related:['Related','var(--brandA)'],child:['Child','var(--brandB)'],duplicate:['Duplicate','var(--faint)']};
+    const curLinks=S.links[S.activeId]||[];
+    const linkedView=curLinks.map(l=>{ const li=S.incidents.find(x=>x.id===l.id); return li?{ id:li.id, title:li.title, sev:li.sev, sevBg:this.sevBg(li.sev), relLabel:relMeta[l.rel][0], relColor:relMeta[l.rel][1], onCycle:()=>this.cycleLinkRel(l.id), onOpen:()=>this.selectIncident(li.id), onUnlink:()=>this.unlinkIncident(l.id) }:null; }).filter(Boolean);
+    const linkableView=S.incidents.filter(i=>i.id!==S.activeId && !curLinks.find(l=>l.id===i.id)).map(i=>({ id:i.id, title:i.title, onLink:()=>this.linkIncident(i.id,'related') }));
+
+    // incidents list
+    const incidentsView=S.incidents.map(i=>{ const icu=this.userById(i.assign&&i.assign.ic); return {
+      id:i.id, title:i.title||'Untitled incident', sev:i.sev, status:i.status, impact:i.impact||'—',
+      sevBg:this.sevBg(i.sev), statusColor:this.statusColor(i.status), border: i.id===S.activeId?'var(--brandA)':'var(--line)',
+      serviceLabel:i.serviceName||'—', countryLabel:i.country||'—', icName: icu?icu.name:'Unassigned', evLabel:((i.evidence?i.evidence.length:0)+' evidence'),
+      onOpen:()=>this.selectIncident(i.id), onEdit:()=>this.editIncident(i.id), onDelete:()=>this.askDelete(i.id)
+    };});
+
+    // war room roster slots
+    const rosterSlots=(this.ROSTER_SLOTS).map(slot=>{ const r=this.role(slot); const uid=inc&&inc.assign?inc.assign[slot]:null; const u=this.userById(uid); return {
+      role:r.label, name: u?u.name:'Unassigned', init: u?this.ini(u.name):'+', nameColor: u?'var(--text)':'var(--faint)', avBg: u? (u.type==='group'?'var(--brandB)':'var(--grad)') : 'var(--panel2)',
+      onClick:()=>this.openAssign(slot)
+    };});
+
+    // timeline
+    const tc=(t)=>this.TYPE_COLORS[t]||'#6c7fb0';
+    const timelineFull=inc? inc.timeline.map(e=>({ ...e, color:tc(e.type), editText:this.eb(v=>this.updItem('timeline',e.id,'text',v)), editТime:this.eb(v=>this.updItem('timeline',e.id,'t',v)), cycleType:()=>this.cycleType(e.id), onDel:()=>this.delItem('timeline',e.id) })) : [];
+    const feedRecent=inc? inc.timeline.slice(-6).map(e=>({t:e.t.slice(0,8),type:e.type,color:tc(e.type),text:e.text})) : [];
+    const scribeSources=[ {src:'Teams messages',detail:'channel + bridge chat',c:'#6c7fb0'},{src:'Incident commands',detail:'/incident /decision /resolve',c:'#2E93E6'},{src:'Monitoring events',detail:'Datadog · Sentinel · Azure Monitor',c:'#ff3d6e'},{src:'ITSM updates',detail:'ServiceNow tickets & tasks',c:'#37d39b'},{src:'Change & deploy',detail:'Azure DevOps · GitHub',c:'#8a63d2'},{src:'Audit logs',detail:'Entra sign-ins · admin actions',c:'#ffb020'},{src:'Human milestones',detail:'responder-confirmed events',c:'#37d39b'},{src:'Dependency graph',detail:'CMDB service map',c:'#2E93E6'} ];
+
+    // hypotheses
+    const hyposView=inc? inc.hypos.map(h=>{ const [c,bg]=this._hypoStyle(h.status); return {...h, owner_init:this.ini(h.owner), sc:c, sbg:bg, onClick:()=>this.cycleHypo(h.id), onDel:()=>this.delItem('hypos',h.id), editTitle:this.eb(v=>this.updItem('hypos',h.id,'title',v)), editFor:this.eb(v=>this.updItem('hypos',h.id,'forE',v)), editAgainst:this.eb(v=>this.updItem('hypos',h.id,'againstE',v)), editOwner:this.eb(v=>this.updItem('hypos',h.id,'owner',v)) }; }) : [];
+    const topH = inc&&inc.hypos.length? (inc.hypos.find(h=>h.status==='Confirmed')||inc.hypos.find(h=>h.status==='Probable')||inc.hypos[0]) : null;
+
+    // evidence
+    const kindOf=(k)=>this.EVIDENCE_KINDS.find(x=>x.k===k)||this.EVIDENCE_KINDS[0];
+    const evidenceView=inc&&inc.evidence? inc.evidence.map(v=>{ const kd=kindOf(v.kind); return {...v, glyph:kd.glyph, kindLabel:kd.label, kc:kd.c, cycleKind:()=>this.cycleKind(v.id), onDel:()=>this.delItem('evidence',v.id), editTitle:this.eb(x=>this.updItem('evidence',v.id,'title',x)), editNote:this.eb(x=>this.updItem('evidence',v.id,'note',x)), editSource:this.eb(x=>this.updItem('evidence',v.id,'source',x)), editRef:this.eb(x=>this.updItem('evidence',v.id,'ref',x)) }; }) : [];
+
+    // comms
+    const commMeta={tech:{aud:'Technical',to:'Responders & engineering'},exec:{aud:'Executive',to:'Leadership & business owners'},sd:{aud:'Service desk',to:'Stores & front-line support'}};
+    const commsView=inc? ['tech','exec','sd'].map(k=>{ const c=inc.comms[k]; return { aud:commMeta[k].aud, to:commMeta[k].to, body:c.body, editBody:this.eb(v=>this.editComm(k,v)), onApprove:()=>this.approveComm(k), onEmail:()=>this.openEmail(k), btnBg:c.approved?'var(--ok)':'var(--grad)', btnLabel:c.approved?'✓ Approved':'Approve', statusLabel:c.approved?'APPROVED · READY TO RELEASE':'AWAITING HUMAN APPROVAL', statusColor:c.approved?'var(--ok)':'var(--warn)' }; }) : [];
+
+    // actions
+    const prioColor={P1:'#ff3d6e',P2:'#ffb020',P3:'#2E93E6','—':'#6c7fb0'};
+    const seedActions = inc && (!inc.actions || inc.actions.length===0) && inc.id==='INC-2026-0047';
+    const actList = inc? (inc.actions && inc.actions.length? inc.actions : (inc.id==='INC-2026-0047'? this._defaultActions() : [])) : [];
+    const actionsView=actList.map(a=>{ const st=a.weak?'Rejected':a.status; const stc=st==='Done'?'var(--ok)':(st==='In progress'?'var(--warn)':(st==='Rejected'?'var(--faint)':'var(--brandA)')); return {...a, st, stc, pc:prioColor[a.prio]||'#6c7fb0', cursor:a.weak?'default':'pointer', onClick:a.weak?(()=>{}):(()=>this.toggleAction(a.id)), cyclePrio:a.weak?(()=>{}):(()=>this.cyclePrio(a.id)), onDel:()=>this.delItem('actions',a.id), editDesc:this.eb(v=>this.updItem('actions',a.id,'desc',v)), editOwner:this.eb(v=>this.updItem('actions',a.id,'owner',v)), editDue:this.eb(v=>this.updItem('actions',a.id,'due',v)), rowBg:a.weak?'color-mix(in srgb, var(--accent) 7%, var(--panel))':'var(--panel)', rowBorder:a.weak?'color-mix(in srgb, var(--accent) 35%, transparent)':'var(--line)', descColor:a.weak?'var(--muted)':'var(--text)', showMeta:!a.weak, metaGap:a.weak?'4px':'8px' }; });
+
+    // declare draft
+    const d=S.draft; const dsev=d?this.computeSev(d.sel):{level:'SEV-3',reason:''};
+    const dimCfg=[ {key:'business',tag:'01',label:'Business impact',opts:['Store payments blocked','Degraded checkout','Internal tooling only']},{key:'geo',tag:'02',label:'Geographic impact',opts:['One store','One country','Global']},{key:'users',tag:'03',label:'User impact',opts:['Internal users','Customers','Suppliers']},{key:'data',tag:'04',label:'Data impact',opts:['No data impact','Exposure suspected','Confirmed exposure']},{key:'duration',tag:'05',label:'Duration',opts:['< 15 min','15–60 min','> 1 hour']},{key:'service',tag:'06',label:'Critical service',opts:['Payment','Identity','ERP','E-commerce','None']},{key:'regulatory',tag:'07',label:'Regulatory impact',opts:['None','PCI DSS','GDPR','Contractual']} ];
+    const dimsView=dimCfg.map(dim=>({ tag:dim.tag, label:dim.label, options:dim.opts.map(o=>{ const active=d&&d.sel[dim.key]===o; return {label:o, onClick:()=>this.setDraftDim(dim.key,o), bg:active?'var(--grad)':'var(--panel2)', color:active?'#fff':'var(--muted)', border:active?'transparent':'var(--line)'}; }) }));
+
+    // admin directory
+    const roleLabel=(k)=>{ const r=this.role(k); return r?r.label:k; };
+    const directoryView=S.directory.map(u=>({ id:u.id, name:u.name, email:u.email, init:this.ini(u.name), typeLabel:u.type==='group'?'GROUP':'USER', avatarRadius:u.type==='group'?'9px':'50%', avBg:u.type==='group'?'var(--brandB)':'var(--grad)', onDel:()=>this.delMapping(u.id),
+      roleChips:this.ROLES.map(r=>{ const on=u.roles.includes(r.key); return {label:r.label, onToggle:()=>this.toggleDirRole(u.id,r.key), bg:on?(r.key==='admin'?'color-mix(in srgb,var(--warn) 22%,transparent)':'color-mix(in srgb,var(--brandA) 20%,transparent)'):'transparent', color:on?(r.key==='admin'?'var(--warn)':'var(--brandA)'):'var(--faint)', border:on?(r.key==='admin'?'var(--warn)':'var(--brandA)'):'var(--line)'}; }).filter((_,idx)=>{ // show assigned first, then a few common — but keep all for full control
+        return true; })
+    }));
+    const roleCatalogue=this.ROLES.map(r=>({ label:r.label, glyph:r.glyph, desc:r.desc, kindLabel:r.kind==='platform'?'PLATFORM':'INCIDENT', chipBg: r.kind==='platform'?'color-mix(in srgb,var(--warn) 18%,transparent)':'color-mix(in srgb,var(--brandA) 18%,transparent)', chipColor: r.kind==='platform'?'var(--warn)':'var(--brandA)', count:S.directory.filter(u=>u.roles.includes(r.key)).length }));
+
+    // assign modal
+    const slot=S.assignSlot; const slotRole=slot?this.role(slot):null;
+    const assignedId=slot&&inc&&inc.assign?inc.assign[slot]:null;
+    const eligible=slot? S.directory.filter(u=>u.roles.includes(slot)) : [];
+    const others=slot? S.directory.filter(u=>!u.roles.includes(slot)) : [];
+    const mapCand=(u,sel)=>({ name:u.name, email:u.email, init:this.ini(u.name), avatarRadius:u.type==='group'?'9px':'50%', avBg:u.type==='group'?'var(--brandB)':'var(--grad)', selected: u.id===assignedId, onPick:()=>this.setAssign(slot,u.id), border:u.id===assignedId?'var(--ok)':'var(--line)', bg:u.id===assignedId?'color-mix(in srgb,var(--ok) 12%,transparent)':'var(--panel2)' });
+    const assignCandidates=eligible.map(u=>mapCand(u,true));
+    const assignOthers=others.map(u=>mapCand(u,false));
+
+    // email modal
+    const ed=S.emailDraft; const dir=S.directory;
+    const recipientsView= ed? dir.map(u=>{ const m=ed.recips[u.id]; return { name:u.name, email:u.email, init:this.ini(u.name), avatarRadius:u.type==='group'?'9px':'50%', border: m?'var(--brandA)':'var(--line)', rowBg: m?'color-mix(in srgb,var(--brandA) 8%,transparent)':'var(--panel2)',
+      setTo:()=>this.setRecip(u.id,'to'), setBcc:()=>this.setRecip(u.id,'bcc'),
+      toBg:m==='to'?'var(--grad)':'transparent', toColor:m==='to'?'#fff':'var(--muted)', toBorder:m==='to'?'transparent':'var(--line)',
+      bccBg:m==='bcc'?'var(--brandB)':'transparent', bccColor:m==='bcc'?'#fff':'var(--muted)', bccBorder:m==='bcc'?'transparent':'var(--line)' }; }) : [];
+    const toCount= ed? Object.values(ed.recips).filter(v=>v==='to').length : 0;
+    const bccCount= ed? Object.values(ed.recips).filter(v=>v==='bcc').length : 0;
+
+    // static content
+    const metrics=[{k:'MTTA',v:'2m',s:'acknowledge',trend:'↓ 18%',good:true},{k:'MTT-Assemble',v:'6m',s:'responders',trend:'↓ 30%',good:true},{k:'MTT-Identify',v:'9m',s:'probable cause',trend:'↓ 22%',good:true},{k:'MTTM',v:'27m',s:'mitigate',trend:'↓ 12%',good:true},{k:'MTTR',v:'58m',s:'recover',trend:'↓ 9%',good:true},{k:'MTT-RCA',v:'1.2d',s:'RCA published',trend:'↓ 61%',good:true},{k:'Repeat rate',v:'14%',s:'recurring',trend:'↑ 3%',good:false},{k:'Change-caused',v:'42%',s:'from change',trend:'flat',good:false}].map(m=>({...m,trendColor:m.good?'var(--ok)':(m.trend==='flat'?'var(--faint)':'var(--warn)')}));
+    const incidentCats=[{label:'Payment',pct:38,c:'var(--accent)'},{label:'Identity',pct:22,c:'var(--brandA)'},{label:'E-commerce',pct:18,c:'var(--brandB)'},{label:'ERP',pct:14,c:'var(--warn)'},{label:'Network',pct:8,c:'var(--faint)'}].map(x=>({...x,pctLabel:x.pct+'%'}));
+    const archLayers=[{t:'Major Incident Portal',s:'React · Blazor',w:'62%',grad:true},{t:'Teams App · Bot · Adaptive Cards',s:'Teams SDK · Graph',w:'74%',grad:true},{t:'Incident Orchestration & State Engine',s:'Durable Functions · Logic Apps',w:'86%',grad:true},{t:'Timeline · Workflow · Comms · RCA Engine',s:'Event Hubs · Azure OpenAI · AI Search',w:'100%',grad:false},{t:'Integration & Event Layer',s:'Sentinel · Datadog · ServiceNow · Jira · Entra',w:'100%',grad:false},{t:'Service & Dependency Knowledge Graph',s:'Runbooks · Architecture · Previous incidents',w:'80%',grad:true}].map(l=>({...l,bg:l.grad?'var(--grad)':'var(--panel2)',tc:l.grad?'#fff':'var(--text)',sc:l.grad?'rgba(255,255,255,.78)':'var(--faint)'}));
+    const rcaFactors=[{k:'Trigger',v:'Certificate rotation in CHG-18442 shipped an intermediate CA the gateway did not trust.',tone:'#ff3d6e'},{k:'Root cause',v:'Deployment pipeline had no TLS chain-validation gate against the gateway trust store.',tone:'#ff3d6e'},{k:'Contributing factor',v:'Change executed outside a canary window; rolled to all Swedish stores at once.',tone:'#ffb020'},{k:'Detection gap',v:'No synthetic payment ran post-deploy; first signal came from live decline rate.',tone:'#ffb020'},{k:'Response factor',v:'Clear rollback owner and pre-approved runbook enabled recovery in 58 minutes.',tone:'#37d39b'},{k:'Recovery factor',v:'Rollback of CHG-18442 restored the trusted chain; success rate returned to baseline.',tone:'#37d39b'}];
+    const fiveWhys=['Why did payments fail? The gateway rejected the store service TLS handshake.','Why rejected? CHG-18442 deployed an untrusted intermediate certificate.','Why untrusted cert deployed? No validation against the gateway trust store existed.','Why no validation? The pipeline had no TLS chain-health gate.','Why no gate? Certificate lifecycle was treated as config, not a release-blocking control.'].map((t,i)=>({n:i+1,t}));
+
+    return {
+      setRef:(el)=>{this.rootRef=el;}, themeOptions, toggleAdmin:this.toggleAdmin, stop:this.stop, closeModal:this.closeModal,
+      isAdmin:S.isAdmin, adminTip:S.isAdmin?'Admin mode ON — click to preview as responder':'Admin mode OFF', adminBtnBg:S.isAdmin?'color-mix(in srgb,var(--warn) 20%,transparent)':'var(--chip)', adminBtnColor:S.isAdmin?'var(--warn)':'var(--muted)',
+      meRole:S.isAdmin?'Administrator · Incident Commander':'Incident Commander',
+      navOperate, navResolve, navReadiness, goAdmin:()=>this.setView('admin'),
+      vIncidents:S.view==='incidents', vWarroom:S.view==='warroom', vDeclare:S.view==='declare', vTimeline:S.view==='timeline', vHypotheses:S.view==='hypotheses', vEvidence:S.view==='evidence', vComms:S.view==='comms', vRca:S.view==='rca', vActions:S.view==='actions', vAnalytics:S.view==='analytics', vPlatform:S.view==='platform', vAdmin:S.view==='admin', vOncall:S.view==='oncall', vRunbooks:S.view==='runbooks', vStatus:S.view==='status', vSlo:S.view==='slo',
+      schedulesView, escalationView, pagesView, runbooksView, statusComponents, statusUpdates, addStatusUpdate:this.addStatusUpdate, statusPublished:S.statusPage.published, statusUrl:S.statusPage.url, toggleStatusPublish:this.toggleStatusPublish, publishLabel:S.statusPage.published?'● Live':'Publish page', publishBg:S.statusPage.published?'color-mix(in srgb,var(--ok) 16%,transparent)':'var(--grad)', publishColor:S.statusPage.published?'var(--ok)':'#fff', overallLabel:overallState[0], overallColor:overallState[1], sloView, linkedView, linkableView, hasLinks:linkedView.length>0,
+      clock:'22:41 CET',
+      incId:inc?inc.id:'—', incTitle:inc?(inc.title||'Untitled'):'No incident', status:inc?inc.status:'—', statusDot:inc?this.statusColor(inc.status):'var(--faint)', sev:inc?inc.sev:'—', sevBg:inc?this.sevBg(inc.sev):'var(--grad)', incStarted:inc?inc.started:'—', incDuration:inc?inc.duration:'—', incImpact:inc?inc.impact:'', editImpact:this.eb(v=>this.updateInc('impact',v)),
+      incidentsView, noIncidents:S.incidents.length===0,
+      rosterSlots, feedRecent, scribeSources, timelineFull, addTimeline:this.addTimeline,
+      cardHypo: topH?topH.title:'No hypothesis yet — add one in the register.', cardHypoStatus: topH?topH.status.toUpperCase():'NONE',
+      cardActions:[{label:'+ Add update',onClick:()=>this.setView('comms')},{label:'Assign roles',onClick:()=>this.setView('warroom')},{label:'Record decision',onClick:()=>{ this._upd(i=>({...i,timeline:[...i.timeline,{id:this.uid('t'),t:this.now(),type:'DECISION',src:'ARES',text:'Decision recorded by IC — click to edit on the timeline.'}]})); this.setView('timeline'); }},{label:'Add evidence',onClick:()=>{ this.addEvidence(); this.setView('evidence'); }},{label:'Open dashboard',onClick:()=>this.setView('analytics')},{label:'View hypotheses',onClick:()=>this.setView('hypotheses')}],
+      resources:[{src:'Datadog',label:'Payment latency & error-rate dashboard'},{src:'ServiceNow',label:inc?inc.id+' · linked tickets':'—'},{src:'Azure',label:'CHG-18442 change record & deploy log'},{src:'Sentinel',label:'TLS anomaly detection — store network'},{src:'CMDB',label:(inc?inc.serviceName:'service')+' dependency graph'}],
+      spark:[30,34,31,36,33,38,35,88,92,95,90,94,89,72,58,44,30,22,16,12].map((v,i)=>({h:v+'%',c:i>=7&&i<=12?'var(--accent)':(i>12?'var(--ok)':'var(--brandA)')})),
+      goComms:()=>this.setView('comms'), goTimeline:()=>this.setView('timeline'), goEvidence:()=>this.setView('evidence'), goActions:()=>this.setView('actions'), resolveIncident:this.resolveIncident, newIncident:this.newIncident,
+      // declare
+      declareKicker:S.draftMode==='edit'?'EDIT INCIDENT':'DECLARE INCIDENT', declareTitle:S.draftMode==='edit'?'Edit incident details':'Deterministic severity classification', saveLabel:S.draftMode==='edit'?'Save changes →':'Declare & open war room →',
+      draftTitle:d?d.title:'', setDraftTitle:(e)=>this.setDraft('title',e.target.value), draftImpact:d?d.impact:'', setDraftImpact:(e)=>this.setDraft('impact',e.target.value), draftServiceName:d?d.serviceName:'', setDraftServiceName:(e)=>this.setDraft('serviceName',e.target.value), draftCountry:d?d.country:'', setDraftCountry:(e)=>this.setDraft('country',e.target.value),
+      dimsView, draftSev:dsev.level, draftSevBg:this.sevBg(dsev.level), draftReason:dsev.reason, saveDraft:this.saveDraft, cancelDraft:this.cancelDraft,
+      autoSteps:['Create the incident record & ServiceNow ticket','Open a Microsoft Teams channel + bridge','Invite responders & assign incident roles','Pin dashboard, timeline & Adaptive Card','Correlate alerts, changes & dependencies','Start the AI scribe & real-time timeline'],
+      // hypotheses/evidence/comms/actions
+      hyposView, addHypo:this.addHypo,
+      evidenceView, addEvidence:this.addEvidence, noEvidence: !(inc&&inc.evidence&&inc.evidence.length),
+      commsView, lastEmail:S.lastEmail,
+      actionsView, addAction:this.addAction,
+      // admin
+      directoryView, roleCatalogue, addMapping:this.addMapping, syncEntra:this.syncEntra, syncStatus:S.syncStatus,
+      // modals
+      showAssign:S.modal==='assign', assignRoleLabel:slotRole?slotRole.label:'', assignCandidates, assignOthers, assignHasOther:assignOthers.length>0, clearAssign:this.clearAssign,
+      showEmail:S.modal==='email', emailSubject:ed?ed.subject:'', setEmailSubject:(e)=>this.setEmailField('subject',e.target.value), emailBody:ed?ed.body:'', setEmailBody:(e)=>this.setEmailField('body',e.target.value), recipientsView, toCount, bccCount, totalRecips:toCount+bccCount, sendEmail:this.sendEmail,
+      showDelete:S.modal==='delete', deleteLabel: S.deleteId||'', confirmDelete:this.confirmDelete,
+      // static
+      metrics, incidentCats, patternInsight:'Four of the previous seven payment incidents involved certificate-lifecycle failures across independently managed infrastructure.', archLayers, rcaFactors, fiveWhys, rcaEvidence:['CHG-18442 completed at 21:39:17','TLS failures began at 21:41:06','No comparable failures in prior 24h','Service recovered after rollback at 22:37:40'], rcaStructure:['Executive summary','Incident classification','Business & customer impact','Affected services & dependencies','Detection & escalation','Detailed timeline','Technical analysis','Trigger','Root cause','Contributing factors','Control failures','Response effectiveness','Recovery actions','Five Whys','Corrective & preventive actions','Owners & deadlines','Residual risk','Lessons learned','Supporting evidence','Approval & closure'].map((t,i)=>({n:String(i+1).padStart(2,'0'),t})),
+      secControls:['Entra ID RBAC & PIM','Incident-level authorization','Ops / security incident separation','Legal & HR restricted classes','Immutable activity logging','Tenant & legal-entity boundaries','Private endpoints · CMK','Prompt-injection controls','Restricted transcript access','Secret & PII redaction','Human approval for comms & remediation','No production write access for the LLM'], buyList:['Standard incident process','Speed over deep customization','Mature on-call needed now','Limited internal dev capacity','SaaS residency acceptable'], buildList:['Complex legal-entity segregation','Store / country / region impact models','Custom security-incident confidentiality','Many ITSM & monitoring environments','Own the resilience knowledge graph']
+    };
+  }
+
+  // on-call / paging
+  ackPage=(id)=>this.setState(s=>({pages:s.pages.map(p=>p.id===id?{...p,state:'Acknowledged',ackAt:this.now().slice(0,5)}:p)}));
+  pageNow=(epName)=>{ const t=this.now().slice(0,5); this.setState(s=>({pages:[{id:this.uid('pg'),target:'Primary on-call · '+(epName||'manual page'),via:'Teams · Push',state:'Paging',at:t,ackAt:null},...s.pages]})); };
+  // runbooks
+  toggleRunStep=(rbId,stepId)=>this.setState(s=>({runbooks:s.runbooks.map(rb=>rb.id!==rbId?rb:{...rb,steps:rb.steps.map(st=>st.id===stepId?{...st,done:!st.done}:st)})}));
+  attachRunbook=(rbId)=>{ const rb=this.state.runbooks.find(r=>r.id===rbId); this._upd(i=>({...i,timeline:[...i.timeline,{id:this.uid('t'),t:this.now(),type:'DECISION',src:'Runbook',text:'Runbook attached: '+rb.title}]})); this.setView('warroom'); };
+  editRunbook=(rbId,f,v)=>this.setState(s=>({runbooks:s.runbooks.map(rb=>rb.id===rbId?{...rb,[f]:v}:rb)}));
+  // status page
+  toggleStatusPublish=()=>this.setState(s=>({statusPage:{...s.statusPage,published:!s.statusPage.published}}));
+  cycleComponent=(id)=>this.setState(s=>{const o=['operational','degraded','outage'];return {statusPage:{...s.statusPage,components:s.statusPage.components.map(c=>c.id===id?{...c,state:o[(o.indexOf(c.state)+1)%3]}:c)}};});
+  editStatusUpdate=(id,f,v)=>this.setState(s=>({statusPage:{...s.statusPage,updates:s.statusPage.updates.map(u=>u.id===id?{...u,[f]:v}:u)}}));
+  addStatusUpdate=()=>{ const inc=this.getActive(); this.setState(s=>({statusPage:{...s.statusPage,updates:[{id:this.uid('su'),t:this.now().slice(0,5)+' CET',state:'investigating',title:'New update — click to edit',body:(inc&&inc.comms.sd&&inc.comms.sd.body)||'Describe the customer-facing update.'},...s.statusPage.updates]}})); };
+  delStatusUpdate=(id)=>this.setState(s=>({statusPage:{...s.statusPage,updates:s.statusPage.updates.filter(u=>u.id!==id)}}));
+  cycleUpdateState=(id)=>this.setState(s=>{const o=['investigating','identified','monitoring','resolved'];return {statusPage:{...s.statusPage,updates:s.statusPage.updates.map(u=>u.id===id?{...u,state:o[(o.indexOf(u.state)+1)%4]}:u)}};});
+  // linked incidents
+  linkIncident=(otherId,rel)=>this.setState(s=>{const cur=s.links[s.activeId]||[];const ex=cur.find(l=>l.id===otherId);const next=ex?cur.map(l=>l.id===otherId?{...l,rel}:l):[...cur,{id:otherId,rel:rel||'related'}];return {links:{...s.links,[s.activeId]:next}};});
+  cycleLinkRel=(otherId)=>this.setState(s=>{const o=['related','child','duplicate'];const cur=s.links[s.activeId]||[];return {links:{...s.links,[s.activeId]:cur.map(l=>l.id===otherId?{...l,rel:o[(o.indexOf(l.rel)+1)%3]}:l)}};});
+  unlinkIncident=(otherId)=>this.setState(s=>({links:{...s.links,[s.activeId]:(s.links[s.activeId]||[]).filter(l=>l.id!==otherId)}}));
+
+  _defaultActions(){
+    return [
+      { id:'a1', weak:false, desc:'Add automated certificate-chain validation gate to the deployment pipeline', owner:'Payment Platform', due:'2026-08-01', prio:'P1', status:'In progress' },
+      { id:'a2', weak:false, desc:'Add synthetic payment transaction monitoring per store cluster', owner:'SRE', due:'2026-08-15', prio:'P1', status:'Open' },
+      { id:'a3', weak:false, desc:'Require canary deployment by geography for gateway changes', owner:'Release Eng', due:'2026-08-22', prio:'P2', status:'Open' },
+      { id:'a4', weak:false, desc:'Automatically block non-compliant firewall changes to payment egress', owner:'Security', due:'2026-09-05', prio:'P2', status:'Open' },
+      { id:'a5', weak:false, desc:'Test payment-gateway failover quarterly', owner:'Payment Platform', due:'2026-09-30', prio:'P3', status:'Open' },
+      { id:'a6', weak:true, desc:'Monitor certificate deployments more closely', owner:'—', due:'—', prio:'—', status:'Rejected' },
+      { id:'a7', weak:true, desc:'Remind the team to be careful with production changes', owner:'—', due:'—', prio:'—', status:'Rejected' }
+    ];
+  }
+}
+</script>
+</body>
+</html>

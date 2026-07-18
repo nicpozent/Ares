@@ -1,0 +1,253 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARES — Application Evaluation &amp; Threat Model</title>
+<style>
+  :root{
+    --bg:#f3f5fb; --panel:#ffffff; --ink:#10143a; --muted:#48507a; --faint:#6a7099;
+    --line:#e2e6f3; --line2:#eef1f9;
+    --accent:#3b4fd0; --accent-soft:#e7ebfb; --navy:#10143a;
+    --good:#15a34a; --good-bg:#e7f4ec; --strong:#3b4fd0; --strong-bg:#e7ebfb;
+    --ok:#b8860b; --ok-bg:#fbf1d9; --warn:#c2410c; --warn-bg:#fbe9dd;
+    --crit:#c1123a; --crit-bg:#fbe0e6;
+    --shadow:0 1px 2px rgba(16,20,58,.06),0 8px 24px rgba(16,20,58,.05);
+    --mono:ui-monospace,"SFMono-Regular","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0a0e20; --panel:#131834; --ink:#eef1fb; --muted:#a6adcf; --faint:#7b83a9;
+      --line:#232c50; --line2:#19203e;
+      --accent:#7d95f2; --accent-soft:#182348; --navy:#080b1a;
+      --good:#47c67d; --good-bg:#10331f; --strong:#7d95f2; --strong-bg:#17224a;
+      --ok:#d9a441; --ok-bg:#302713; --warn:#e0794a; --warn-bg:#331f0e;
+      --crit:#f3607f; --crit-bg:#3a0f1c;
+      --shadow:0 1px 2px rgba(0,0,0,.45),0 10px 30px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0e20; --panel:#131834; --ink:#eef1fb; --muted:#a6adcf; --faint:#7b83a9;
+    --line:#232c50; --line2:#19203e;
+    --accent:#7d95f2; --accent-soft:#182348; --navy:#080b1a;
+    --good:#47c67d; --good-bg:#10331f; --strong:#7d95f2; --strong-bg:#17224a;
+    --ok:#d9a441; --ok-bg:#302713; --warn:#e0794a; --warn-bg:#331f0e;
+    --crit:#f3607f; --crit-bg:#3a0f1c;
+    --shadow:0 1px 2px rgba(0,0,0,.45),0 10px 30px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --bg:#f3f5fb; --panel:#ffffff; --ink:#10143a; --muted:#48507a; --faint:#6a7099;
+    --line:#e2e6f3; --line2:#eef1f9;
+    --accent:#3b4fd0; --accent-soft:#e7ebfb; --navy:#10143a;
+    --good:#15a34a; --good-bg:#e7f4ec; --strong:#3b4fd0; --strong-bg:#e7ebfb;
+    --ok:#b8860b; --ok-bg:#fbf1d9; --warn:#c2410c; --warn-bg:#fbe9dd;
+    --crit:#c1123a; --crit-bg:#fbe0e6;
+    --shadow:0 1px 2px rgba(16,20,58,.06),0 8px 24px rgba(16,20,58,.05);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1140px;margin:0 auto;padding:40px 24px 80px;}
+
+  header{background:linear-gradient(135deg,var(--navy),#2a3a9e);border-radius:18px;padding:34px 34px 30px;color:#eef1fb;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  header::after{content:"";position:absolute;inset:0;background:radial-gradient(560px 300px at 88% -10%,rgba(125,149,242,.4),transparent 60%);pointer-events:none;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#a7b6e6;margin:0 0 10px;position:relative;z-index:1;}
+  h1{font-size:clamp(26px,4vw,38px);line-height:1.1;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance;position:relative;z-index:1;}
+  .sub{margin:12px 0 0;color:#c6cdec;max-width:70ch;font-size:15px;position:relative;z-index:1;}
+  .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px 26px;font-family:var(--mono);font-size:12.5px;color:#aab4dc;position:relative;z-index:1;}
+  .meta b{color:#eef1fb;font-weight:600;}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 30px;}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;box-shadow:var(--shadow);}
+  .tile .k{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 8px;}
+  .tile .v{font-size:30px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+  .tile .v small{font-size:15px;color:var(--faint);font-weight:600;}
+  .tile .note{font-size:12.5px;color:var(--muted);margin-top:4px;}
+
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:34px 0 14px;display:flex;align-items:center;gap:10px;}
+  h2::after{content:"";flex:1;height:1px;background:var(--line);}
+  .lead{color:var(--muted);font-size:14px;max-width:80ch;margin:-4px 0 14px;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+  .scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:860px;}
+  thead th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--line2);white-space:nowrap;}
+  tbody td{padding:14px 16px;border-bottom:1px solid var(--line2);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--accent-soft);}
+  .num{font-family:var(--mono);color:var(--faint);font-size:12.5px;width:26px;}
+  .dim{font-weight:600;color:var(--ink);}
+  .dim small{color:var(--faint);font-weight:400;}
+  .ev{color:var(--muted);font-size:13px;max-width:46ch;}
+  .gap{color:var(--muted);font-size:13px;max-width:32ch;}
+  .mono{font-family:var(--mono);font-size:12px;color:var(--faint);white-space:nowrap;}
+
+  .rate{display:inline-flex;flex-direction:column;gap:5px;white-space:nowrap;}
+  .dots{display:inline-flex;gap:3px;}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--line);}
+  .dot.on{background:var(--tier);}
+  .tier{font-size:11px;font-family:var(--mono);font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--tier);}
+  .t5{--tier:var(--good);}.t4{--tier:var(--strong);}.t3{--tier:var(--ok);}.t2{--tier:var(--warn);}.t1{--tier:var(--crit);}
+  .tD{--tier:var(--faint);}
+
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--mono);white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;}
+  .p-crit{background:var(--crit-bg);color:var(--crit);}
+  .p-hi{background:var(--warn-bg);color:var(--warn);}
+  .p-med{background:var(--ok-bg);color:var(--ok);}
+  .p-low{background:var(--good-bg);color:var(--good);}
+  .s-open{background:var(--crit-bg);color:var(--crit);}
+  .s-partial{background:var(--ok-bg);color:var(--ok);}
+  .s-planned{background:var(--strong-bg);color:var(--strong);}
+  .s-shipped{background:var(--good-bg);color:var(--good);}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--muted);margin:12px 2px 0;font-family:var(--mono);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+
+  .verdict{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);}
+  .verdict .headline{color:var(--ink);font-size:16px;font-weight:700;margin:0 0 8px;}
+  .verdict .headline b{color:var(--warn);}
+  .verdict p{margin:0;color:var(--muted);font-size:14.5px;max-width:92ch;}
+  .verdict p + p{margin-top:12px;}
+  .verdict b{color:var(--ink);}
+  footer{margin-top:30px;color:var(--faint);font-size:12.5px;font-family:var(--mono);max-width:92ch;line-height:1.6;}
+  @media (max-width:760px){.tiles{grid-template-columns:repeat(2,1fr);}.wrap{padding:24px 14px 60px;}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Incident Command · Birgma / Biltema Group</p>
+    <h1>ARES — Application Evaluation &amp; Threat Model</h1>
+    <p class="sub">An evidence-based assessment of the shipped ARES platform across eighteen engineering, security and compliance dimensions, scored from the actual codebase, plus a STRIDE threat model tied to MITRE ATT&amp;CK / ATLAS and a prioritised risk register. Findings distinguish what is <b>shipped today</b> from the <b>candidate</b> agentic-AI layer (Teams bot, M365 Copilot, ServiceDesk Plus, signal-driven auto-open) that is designed but not yet built. Honest basis: the app is a feature-complete cockpit with real Microsoft integrations, but it is <b>fail-open by default</b>, untested, and unhardened — this report states the gaps rather than smoothing them.</p>
+    <div class="meta">
+      <span>Reviewed <b>2026-07-15</b></span>
+      <span>Stack <b>React 18 · TS · .NET 8 · PostgreSQL 16</b></span>
+      <span>Automated tests <b>0</b></span>
+      <span>CI gates <b>none</b></span>
+      <span>Frameworks mapped <b>6</b></span>
+    </div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile"><p class="k">Overall</p><div class="v">2.8<small>/5</small></div><p class="note">Pilot-grade prototype — not production-ready</p></div>
+    <div class="tile"><p class="k">Dimensions at ★★★★★</p><div class="v">1<small>/18</small></div><p class="note">Six at ★★★★☆, then a security/ops tail</p></div>
+    <div class="tile"><p class="k">Open High/Critical threats</p><div class="v">4</div><p class="note">Fail-open auth · secrets in config · + 2 candidate-layer</p></div>
+    <div class="tile"><p class="k">Frameworks mapped</p><div class="v">6</div><p class="note">ISO 27001 · 42001 · MITRE · Zero Trust · GDPR/nFADP · EU AI Act</p></div>
+  </div>
+
+  <h2>Scorecard</h2>
+  <p class="lead">Ratings reflect the <b>shipped</b> application at review time. ★★★★★ Excellent · ★★★★☆ Strong · ★★★☆☆ Adequate · ★★☆☆☆ Partial · ★☆☆☆☆ Weak. The agentic layer is scored as <b>Design</b> (specified, not built).</p>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>#</th><th>Dimension</th><th>Rating</th><th>Evidence (shipped)</th><th>Gaps / next</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <h2>Threat model — STRIDE × MITRE</h2>
+  <p class="lead">Method: STRIDE across the trust boundaries (SPA↔API, Teams↔bot, API↔Graph/SDP, API↔model, ingested-content→model, agent↔DB), each threat tied to a MITRE ATT&amp;CK (enterprise) or ATLAS (AI) technique and a mitigation. Severity is likelihood × impact for this deployment. <b>[C]</b> marks threats specific to the <b>candidate</b> agent layer.</p>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>Sev</th><th>Threat</th><th>STRIDE</th><th>Vector in ARES</th><th>MITRE</th><th>Mitigation</th><th>Status</th></tr></thead>
+      <tbody id="threats"></tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><span class="pill p-crit">High</span> critical exposure</span>
+    <span><span class="pill p-med">Med</span> material</span>
+    <span><span class="pill p-low">Low</span> minor / latent</span>
+    <span><span class="pill s-open">Open</span> present in shipped default</span>
+    <span><span class="pill s-partial">Partial</span> some control</span>
+    <span><span class="pill s-planned">Planned</span> design invariant, not built</span>
+  </div>
+
+  <h2>Top risks &amp; next steps</h2>
+  <div class="card scroll">
+    <table>
+      <thead><tr><th>Priority</th><th>Item</th><th>Why</th></tr></thead>
+      <tbody id="risks"></tbody>
+    </table>
+  </div>
+
+  <h2>Verdict</h2>
+  <div class="verdict">
+    <p class="headline"><b>Pilot-grade prototype (2.8/5)</b> — a well-built, feature-complete cockpit with real Microsoft integrations, but fail-open by default, untested and unhardened; not production-ready without the security baseline.</p>
+    <p>ARES is impressively complete as a <b>product</b>: all sixteen screens are built and data-wired against a clean ASP.NET Core 8 + EF Core + PostgreSQL backend and a React 18 / TypeScript-strict SPA with three themes and MSAL sign-in. The Microsoft integrations are real, not mocked — <b>Entra directory import</b>, <b>Graph email</b> in the Birgma house template, and <b>Teams channel + Adaptive Card</b> provisioning — and the <b>severity engine is deterministic</b>, ported identically to both tiers. The data model is sound (composite child keys, jsonb value objects) and the EF migration chain is verified against a live Postgres 16.</p>
+    <p>What holds it back is security posture and engineering safety-net, not features. The API is <b>fail-open by default</b> (<span class="mono">AllowDemoAuth=true</span>; JWT is enforced only when Entra is configured; CORS defaults to a wildcard; no <span class="mono">[Authorize]</span> or role check sits on any controller), so in its shipped configuration anyone who reaches the API has full access. Secrets (DB password, Graph client secret) live in compose/env; the timeline is editable with <b>no immutable audit trail</b>; there are <b>no automated tests and no CI gates</b>; and transport/rate-limiting/headers are undefined. These are the correct concerns for a prototype and are all closable, but they must be closed before any real deployment.</p>
+    <p>The <b>agentic-AI layer</b> (investigate · coordinate · timeline · comms · RCA, via a Teams bot + M365 Copilot, ServiceDesk Plus, and Graph-based auto-open) is a <b>sound design on paper</b> — the six invariants (LLM out of the act plane, human approval for outbound, deterministic severity, per-action RBAC on verified identity, ingested content as data not instructions, everything audited/least-privilege/in-tenant) directly bound the AI-specific threats — but <b>none of it is built yet</b>. Ship the security baseline first; then build the agent behind those invariants.</p>
+  </div>
+
+  <footer>Source of record: the ARES repository (backend/ · frontend/), CLAUDE.md, and the candidate documentation set (docs/candidate/: requirements, TOGAF architecture, ISO 27001/42001, MITRE/Zero-Trust, privacy &amp; AI-regulation) + docs/agent-design-and-threat-model.md. Ratings and threats drawn from the shipped code at review time; [C] items are design-stage. This is an internal engineering assessment, not a certification or legal opinion — gaps are stated, not smoothed over.</footer>
+</div>
+
+<script>
+  var R = [
+    [1,"Functional coverage","screens vs prototype",5,"All 16 screens built and data-wired to the API (incidents, war room, declare, timeline, hypotheses, evidence, comms, RCA, actions, analytics, platform, on-call, runbooks, status page, SLOs, admin); Entra import, Graph email, Teams channel/card all functional","Agentic capabilities (scribe, investigate, RCA drafting) are design-only — the screens are manual today"],
+    [2,"Architecture &amp; modularity","",4,"Modular monolith: ASP.NET Core 8 minimal hosting, controllers by domain, services layer (Graph, SeverityEngine, EmailTemplate, AdaptiveCardBuilder); React SPA; jsonb value objects + composite child keys","Single project; no ADRs until this doc set; a few controllers co-located in one file"],
+    [3,"Frontend engineering","",4,"React 18 + TS strict + Vite 5; token-driven theming (Command/Daylight/Carbon); Zustand store; server-authoritative mutations; deterministic severity ported client-side","Single ~520 KB bundle, no route code-splitting; zero component tests"],
+    [4,"Identity &amp; access","",2,"Entra SSO via MSAL (PKCE) wired on the SPA; JWT validation via Microsoft.Identity.Web when Entra is configured; app-only Graph for import/email","FAIL-OPEN default: AllowDemoAuth=true runs the API unauthenticated; must disable demo + require auth before any deployment"],
+    [5,"Authorization model","",2,"15-role catalogue; incident role slots; assignment candidates filtered to Entra-eligible principals; admin role-mapping UI","No server-side [Authorize]/RBAC on any controller — authorization is not enforced today; per-action RBAC is candidate"],
+    [6,"Data &amp; persistence","",4,"PostgreSQL 16 + EF Core 8; migrations applied on boot and verified against a live Postgres; composite {incidentId,id} child keys; jsonb for severity dims/assignment/comms","Rows are editable with no append-only audit; no backup/retention policy defined"],
+    [7,"Integrations","",4,"Microsoft Graph directory import (groups/members/enterprise-app assignments), Graph sendMail (house template), Teams channel + Adaptive Card provisioning — all real","ServiceDesk Plus, Graph signal ingestion, and the Teams bot / M365 Copilot agent are candidate (not built)"],
+    [8,"Security &amp; hardening","",2,"App-only Graph (client-credentials); human-approval gating on comms release; severity is rule-based not model-set; demo-auth fallback is explicit and documented","CORS wildcard default; secrets (DB password, client secret) in compose/env; no rate limiting, CSP/headers, or defined TLS edge"],
+    [9,"Data protection / GDPR","",2,"Processes limited staff data (directory principals, incident comms); EU/CH residency is the stated intent; SDP EU DC and in-tenant model are design choices","No PII redaction, no DPIA/ROPA, no retention/erasure; sign-in-log ingestion (candidate) raises monitoring concerns"],
+    [10,"Compliance mapping","",3,"Candidate doc set maps ISO 27001:2022 (Annex A SoA-style) + ISO 42001 (AIMS), MITRE ATT&amp;CK/ATLAS, Zero Trust (NIST 800-207 + MS pillars), GDPR/nFADP and the EU AI Act","Mappings are analysis, not implemented/audited controls; no Statement of Applicability sign-off"],
+    [11,"Observability","",2,"Structured ILogger; /health endpoint reporting Entra/demo-auth state; Graph calls logged","No OpenTelemetry/metrics/dashboards; no immutable audit trail or correlation IDs"],
+    [12,"Testing","",1,"Verified manually end-to-end during the build (severity engine cases, CRUD, child mutations, email template, migration apply on live Postgres)","No automated tests at all — no unit, integration, or e2e; nothing gating regressions"],
+    [13,"CI/CD","",1,"Multi-stage Dockerfiles; docker-compose for the full stack (postgres + api + nginx web)","No CI pipeline (by current on-prem choice) — no build/test/SAST/SCA/secret/IaC gates"],
+    [14,"Accessibility (WCAG)","",2,"Theme contrast considered; helmet mark has an aria-label; keyboard-operable buttons","Unicode-glyph icon buttons lack labels; contentEditable is the primary edit affordance; no automated or AT audit"],
+    [15,"Reliability / HA / DR","",2,"Single-node docker-compose; healthcheck on Postgres; migrate-then-seed with retry loop on boot","Single instance; no replication/PITR/backup automation; bot (candidate) needs a public endpoint = new surface"],
+    [16,"AI governance (design)","candidate layer",0,"Six design invariants specified: LLM out of the act plane; human approval for outbound; deterministic severity; per-action RBAC; ingested content as data; audited/least-privilege/in-tenant. ISO 42001 mapping drafted","No agent code exists yet — this is a design-strength note, not a shipped rating"],
+    [17,"Governance &amp; documentation","",3,"CLAUDE.md product spec; README (Entra/Graph setup, run); this candidate set — requirements, TOGAF ADM artifacts, compliance analyses, threat model","No ADR log yet (TOGAF decision log pending); docs are candidate/draft"],
+    [18,"Maintainability / DX","",4,"Clean typed code both tiers; only 5 frontend runtime deps; severity engine kept in lockstep across tiers; readable services layer","No test/CI safety net; bundle not split; a few oversized files"]
+  ];
+  var tierName={5:"Excellent",4:"Strong",3:"Adequate",2:"Partial",1:"Weak",0:"Design"};
+  document.getElementById("rows").innerHTML=R.map(function(r){
+    var n=r[3];
+    var cls = n===0 ? "tD" : "t"+n;
+    var dots=[1,2,3,4,5].map(function(i){return '<span class="dot'+(n>0&&i<=n?' on':'')+'"></span>';}).join("");
+    return '<tr><td class="num">'+r[0]+'</td>'
+      +'<td class="dim">'+r[1]+(r[2]?' <small>'+r[2]+'</small>':'')+'</td>'
+      +'<td><span class="rate '+cls+'"><span class="dots">'+dots+'</span><span class="tier">'+tierName[n]+'</span></span></td>'
+      +'<td class="ev">'+r[4]+'</td><td class="gap">'+r[5]+'</td></tr>';
+  }).join("");
+
+  var T = [
+    ["crit","Fail-open API / no authorization enforced","E of P · Spoofing","AllowDemoAuth=true by default runs the API unauthenticated; no [Authorize]/RBAC on any controller, so anyone reaching the API has full read/write","T1190 · T1078","Set AllowDemoAuth=false; require valid Entra JWT; add per-endpoint + per-action RBAC on verified identity","open"],
+    ["crit","Secrets in configuration","Info disclosure","DB password and Graph client secret live in docker-compose / env; SDP Zoho token (candidate) would too","T1552.001","Key Vault / KeyPerFile; prefer certificate creds over secrets; rotation; no secrets on disk","open"],
+    ["crit","Prompt injection → unauthorized action  [C]","Tampering · E of P","Untrusted chat / SDP tickets / logs ingested by the agent could instruct it to send mail or approve","ATLAS AML.T0051","Read/act separation; deterministic act plane; actions only via signed human clicks; allow-listed tools","planned"],
+    ["crit","Unauthorized approval of a release  [C]","E of P","A bystander in the Teams bridge chat clicks Approve on a SEV-1 comms card","T1078","Server-side RBAC on the clicker's verified AAD id; SEV-1 requires IC/Comms Lead","planned"],
+    ["med","CORS wildcard default","Spoofing","SetIsOriginAllowed(_=>true) when no origins configured lets any origin call the API","T1190","Pin CorsOrigins to the known web origin(s) in every environment","open"],
+    ["med","No immutable audit / editable timeline","Tampering · Repudiation","Timeline, hypotheses and evidence rows are freely editable; no append-only log of who changed what","T1070","Append-only audit table with actor identity + provenance tags on agent writes","open"],
+    ["med","No transport hardening / rate limiting","DoS · Info disclosure","No defined TLS edge, security headers (CSP/HSTS), or rate limiting; Swagger exposed","T1499 · T1040","Reverse-proxy TLS + security headers; rate limits + circuit breaker; gate Swagger","open"],
+    ["med","OAuth token theft / consent phishing","Credential access","Theft or over-consent of Entra app or (candidate) Zoho tokens grants Graph/SDP access","T1528 · T1550","Least-scope perms; certificate creds; Conditional Access; monitor + alert on token use","partial"],
+    ["med","Bot endpoint / webhook spoofing  [C]","Spoofing","Candidate Teams bot needs a public HTTPS endpoint; SDP inbound webhook could be forged to auto-open/act","T1190 · T1133","Validate Bot Framework JWT; HMAC-signed webhooks + IP allowlist; proposal-first auto-open","planned"],
+    ["med","PII / data exfiltration to model or comms  [C]","Info disclosure","Agent could leak staff PII/secrets to the model or into an outbound comm; over-broad chat read","ATLAS AML.T0057","Redaction before model; RSC per-chat scope; in-tenant model; recipient allow-list + confirm","planned"],
+    ["low","Data at rest not encrypted","Info disclosure","No host/volume or field-level encryption defined for the Postgres volume","T1005","Volume/disk encryption; field encryption for any sensitive notes; key held outside the DB","open"],
+    ["low","Hallucinated RCA / hypothesis  [C]","Integrity","Model proposes a wrong root cause or hypothesis that misdirects the response","ATLAS AML.T0048","Confidence + citations; adversarial verifier pass; human approval; severity stays deterministic","planned"],
+    ["low","Runaway cost / DoS  [C]","DoS","Alert storm or agent loop drives mass tickets/emails/model spend","T1499","Dedup/correlation; budget caps; rate limits; kill switch","planned"],
+    ["low","Supply-chain (NuGet / npm)","Tampering","Compromised or vulnerable dependency enters the build; no scanning today","T1195.001","Pinned deps; dependency + secret scanning; SBOM; periodic review","open"]
+  ];
+  var sevName={crit:"High",med:"Med",low:"Low"};
+  var stName={open:"Open",partial:"Partial",planned:"Planned",shipped:"Shipped"};
+  document.getElementById("threats").innerHTML=T.map(function(t){
+    return '<tr>'
+      +'<td><span class="pill p-'+t[0]+'">'+sevName[t[0]]+'</span></td>'
+      +'<td class="dim">'+t[1]+'</td>'
+      +'<td class="mono">'+t[2]+'</td>'
+      +'<td class="ev">'+t[3]+'</td>'
+      +'<td class="mono">'+t[4]+'</td>'
+      +'<td class="gap">'+t[5]+'</td>'
+      +'<td><span class="pill s-'+t[6]+'">'+stName[t[6]]+'</span></td></tr>';
+  }).join("");
+
+  var K = [
+    ["crit","High","Disable demo-auth &amp; enforce RBAC before any deployment","The shipped default is fail-open — this is the single highest risk; require Entra JWT and add per-endpoint + per-action authorization"],
+    ["hi","High","Move secrets to a vault; rotate; prefer certificate creds","DB password and Graph client secret currently sit in compose/env — the first thing an attacker with host or repo access would take"],
+    ["hi","High","Add automated tests + a CI gate","No tests and no pipeline means no regression safety net; add unit/integration/e2e + build/test/SAST/SCA/secret scanning even if deploy stays manual on-prem"],
+    ["med","Medium","Harden the edge: pin CORS, TLS, security headers, rate limits","Baseline web hardening is absent; close CORS wildcard, add a TLS reverse proxy with CSP/HSTS and rate limiting/circuit breaker"],
+    ["med","Medium","Add an append-only audit trail with provenance","Integrity/repudiation gap; every state change (and every agent write) should be attributable and tamper-evident"],
+    ["med","Medium","Complete a DPIA/ROPA + PII redaction before agent/monitoring go-live","Systematic monitoring + AI over staff data warrants a DPIA; redaction and retention must precede signal ingestion"],
+    ["low","Agent","Enforce the six invariants as code before shipping the agent","Read/act separation, per-action RBAC, human approval, deterministic severity, in-tenant model, and audit are what bound the AI-specific threats"]
+  ];
+  document.getElementById("risks").innerHTML=K.map(function(k){
+    return '<tr><td><span class="pill p-'+k[0]+'">'+k[1]+'</span></td><td class="dim">'+k[2]+'</td><td class="ev">'+k[3]+'</td></tr>';
+  }).join("");
+</script>

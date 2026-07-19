@@ -1,5 +1,5 @@
 # ---- build ----------------------------------------------------------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY Ares.Api/Ares.Api.csproj Ares.Api/
 RUN dotnet restore Ares.Api/Ares.Api.csproj

@@ -12,7 +12,7 @@
     <!-- Entra ID auth for the API + downstream Graph -->
     <PackageReference Include="Microsoft.Identity.Web" Version="3.15.1" />
     <PackageReference Include="Azure.Identity" Version="1.13.1" />
-    <PackageReference Include="Microsoft.Graph" Version="5.61.0" />
+    <PackageReference Include="Microsoft.Graph" Version="6.2.0" />
 
     <!-- Persistence -->
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
